@@ -180,7 +180,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h2 id="vmware使用问题"><a href="#vmware使用问题" class="headerlink" title="vmware使用问题"></a>vmware使用问题</h2><h3 id="1-网络问题"><a href="#1-网络问题" class="headerlink" title="1.网络问题"></a>1.网络问题</h3><p>使用vmware虚拟机时，无法连接上网络，提示<br>‘’’<br> Could not connect ‘Ethernet0’ to virtual network ‘/dev/vmnet0’. More information can be found in the vmware.log file.<br>‘’’<br>原因是虚拟机无法启用物理机上的虚拟网卡。<br>解决方法：终端中使用<br>‘ sudo /etc/init.d/vmware restart ‘<br>重新启动vmware服务。</p>
+        <h2 id="vmware使用问题"><a href="#vmware使用问题" class="headerlink" title="vmware使用问题"></a>vmware使用问题</h2><h3 id="1-网络问题"><a href="#1-网络问题" class="headerlink" title="1.网络问题"></a>1.网络问题</h3><p>使用vmware虚拟机时，无法连接上网络，提示<br>‘’’<br>Could not connect ‘Ethernet0’ to virtual network ‘/dev/vmnet0’. More information can be found in the vmware.log file.<br>‘’’<br>原因是虚拟机无法启用物理机上的虚拟网卡。<br>解决方法：终端中使用<br>‘<br>sudo /etc/init.d/vmware restart<br>‘<br>重新启动vmware服务。</p>
 
       
 
