@@ -15,18 +15,18 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="随着互联网的不断发展，网络环境和网络协议的开放性不断提高，信息安全已成为焦点问题之一。假如你通过互联网向朋友发送一封邮件，你能否保证这封邮件未被其他人偷看或者篡改？在互联网上和别人进行互动时，对方又如何来确定你是真正的你呢？因此，有了加密、解密、认证等技术。 一、加密解密为了保护您的数据在传递过程中不被别人窃听或修改，您必须对数据进行加密（加密后的数据称为密文），这样，即使别人窃取了您的数据（密文">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://docsin.uniontech.com/wp-content/uploads/2020/09/private_key.png">
-<meta property="og:image" content="https://docsin.uniontech.com/wp-content/uploads/2020/09/public_key.png">
-<meta property="og:image" content="https://docsin.uniontech.com/wp-content/uploads/2020/09/origin.png">
-<meta property="og:image" content="https://docsin.uniontech.com/wp-content/uploads/2020/09/public.png">
-<meta property="og:image" content="https://docsin.uniontech.com/wp-content/uploads/2020/09/private.png">
-<meta property="og:image" content="https://docsin.uniontech.com/wp-content/uploads/2020/09/ca.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lk27323/image/master/blog/private_key.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lk27323/image/master/blog/public_key.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lk27323/image/master/blog/origin.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lk27323/image/master/blog/public.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lk27323/image/master/blog/private.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lk27323/image/master/blog/ca.png">
 <meta property="article:published_time" content="2020-10-23T07:09:34.000Z">
-<meta property="article:modified_time" content="2020-10-23T07:10:14.798Z">
+<meta property="article:modified_time" content="2021-01-29T07:57:21.639Z">
 <meta property="article:author" content="John Doe">
 <meta property="article:tag" content="学习笔记">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://docsin.uniontech.com/wp-content/uploads/2020/09/private_key.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lk27323/image/master/blog/private_key.png">
   
     <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -67,8 +67,6 @@
 			
 				<li><a href="/">主页</a></li>
 	        
-				<li><a href="/tags/%E9%9A%8F%E7%AC%94/">随笔</a></li>
-	        
 			</ul>
 		</nav>
 		<nav class="header-smart-menu">
@@ -89,17 +87,11 @@
 		<nav class="header-nav">
 			<div class="social">
 				
-					<a class="github" target="_blank" href="#" title="github"><i class="icon-github"></i></a>
-		        
-					<a class="weibo" target="_blank" href="#" title="weibo"><i class="icon-weibo"></i></a>
-		        
-					<a class="rss" target="_blank" href="#" title="rss"><i class="icon-rss"></i></a>
+					<a class="github" target="_blank" href="https://github.com/lk27323" title="github"><i class="icon-github"></i></a>
 		        
 					<a class="zhihu" target="_blank" href="https://www.zhihu.com/" title="zhihu"><i class="icon-zhihu"></i></a>
 		        
-					<a class="bilibili" target="_blank" href="https://www.bilibili.com/" title="bilibili"><i class="icon-bilibili"></i></a>
-		        
-					<a class="google" target="_blank" href="#" title="google"><i class="icon-google"></i></a>
+					<a class="bilibili" target="_blank" href="https://space.bilibili.com/13377752" title="bilibili"><i class="icon-bilibili"></i></a>
 		        
 			</div>
 		</nav>
@@ -127,24 +119,16 @@
 			
 				
 			
-				
-			
 			
 			
 			<nav class="header-nav">
 				<div class="social">
 					
-						<a class="github" target="_blank" href="#" title="github"><i class="icon-github"></i></a>
-			        
-						<a class="weibo" target="_blank" href="#" title="weibo"><i class="icon-weibo"></i></a>
-			        
-						<a class="rss" target="_blank" href="#" title="rss"><i class="icon-rss"></i></a>
+						<a class="github" target="_blank" href="https://github.com/lk27323" title="github"><i class="icon-github"></i></a>
 			        
 						<a class="zhihu" target="_blank" href="https://www.zhihu.com/" title="zhihu"><i class="icon-zhihu"></i></a>
 			        
-						<a class="bilibili" target="_blank" href="https://www.bilibili.com/" title="bilibili"><i class="icon-bilibili"></i></a>
-			        
-						<a class="google" target="_blank" href="#" title="google"><i class="icon-google"></i></a>
+						<a class="bilibili" target="_blank" href="https://space.bilibili.com/13377752" title="bilibili"><i class="icon-bilibili"></i></a>
 			        
 				</div>
 			</nav>
@@ -153,9 +137,7 @@
 				<ul style="width: 50%">
 				
 				
-					<li style="width: 50%"><a href="/">主页</a></li>
-		        
-					<li style="width: 50%"><a href="/tags/%E9%9A%8F%E7%AC%94/">随笔</a></li>
+					<li style="width: 100%"><a href="/">主页</a></li>
 		        
 				</ul>
 			</nav>
@@ -196,13 +178,13 @@
 <h3 id="2-非对称加密"><a href="#2-非对称加密" class="headerlink" title="2.非对称加密"></a>2.非对称加密</h3><p>非对称加密算法又称现代加密算法。加密解密使用的不同秘钥：公开密钥（publickey，让大家都知道）和私有密钥（privatekey，仅自己知道）。需要使用密钥生成算法生成两个秘钥，公开密钥和私有密钥是一对。如果用公开密钥对数据进行加密，只有用对应的私有密钥才能解密；如果用私有密钥对数据进行加密，只有用对应的公开密钥才能解密。非对称加密只能单向加密，如果想解决这个问题，则双方都各自需要一对秘钥。非对称加密算法复杂度高，加密解密速度慢，加密强度高，安全程度高。</p>
 <h3 id="3-RSA密钥"><a href="#3-RSA密钥" class="headerlink" title="3.RSA密钥"></a>3.RSA密钥</h3><p>RSA是一种典型的非对称加密。RSA密钥对可以使用openssl工具生成。下面介绍一下在Linux环境下使用openssl生成RSA密钥对的过程。<br>生成RSA私钥的指令为：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl genrsa -out rsa_private.key 2048</span><br></pre></td></tr></table></figure>
-<p>最后的2048表示生成的私钥长度。<br>打开rsa_private.key可以看到里面的内容如下：<br><img src="https://docsin.uniontech.com/wp-content/uploads/2020/09/private_key.png"><br>接下来生成RSA公钥，指令为:</p>
+<p>最后的2048表示生成的私钥长度。<br>打开rsa_private.key可以看到里面的内容如下：<br><img src="https://raw.githubusercontent.com/lk27323/image/master/blog/private_key.png"><br>接下来生成RSA公钥，指令为:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl rsa -in rsa_private.key -pubout -out rsa_public.key</span><br></pre></td></tr></table></figure>
-<p>打开rsa_public.key，可以看到里面内容为:<br><img src="https://docsin.uniontech.com/wp-content/uploads/2020/09/public_key.png"><br>对文件使用公钥进行加密，先随便生成一个测试用的note.txt文档，在里面写上<br><code>this is a blank file</code><br><img src="https://docsin.uniontech.com/wp-content/uploads/2020/09/origin.png"><br>使用公钥对此文件加密，指令为：</p>
+<p>打开rsa_public.key，可以看到里面内容为:<br><img src="https://raw.githubusercontent.com/lk27323/image/master/blog/public_key.png"><br>对文件使用公钥进行加密，先随便生成一个测试用的note.txt文档，在里面写上<br><code>this is a blank file</code><br><img src="https://raw.githubusercontent.com/lk27323/image/master/blog/origin.png"><br>使用公钥对此文件加密，指令为：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl rsautl -encrypt -inkey rsa_public.key -pubin -in note.txt -out public.txt</span><br></pre></td></tr></table></figure>
-<p>生成public.txt，内容已被加密为密文，无法解读<br><img src="https://docsin.uniontech.com/wp-content/uploads/2020/09/public.png"><br>使用私钥进行解密，指令为：</p>
+<p>生成public.txt，内容已被加密为密文，无法解读<br><img src="https://raw.githubusercontent.com/lk27323/image/master/blog/public.png"><br>使用私钥进行解密，指令为：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl rsautl -decrypt -inkey rsa_private.key -in public.txt -out private.txt</span><br></pre></td></tr></table></figure>
-<p>生成的private.txt即为解密后的文件，查看内容为：<br><img src="https://docsin.uniontech.com/wp-content/uploads/2020/09/private.png"><br>解密后的内容与源文件内容一样，说明解密成功。</p>
+<p>生成的private.txt即为解密后的文件，查看内容为：<br><img src="https://raw.githubusercontent.com/lk27323/image/master/blog/private.png"><br>解密后的内容与源文件内容一样，说明解密成功。</p>
 <h1 id="二、签名认证"><a href="#二、签名认证" class="headerlink" title="二、签名认证"></a>二、签名认证</h1><h3 id="1-签名认证的作用"><a href="#1-签名认证的作用" class="headerlink" title="1.签名认证的作用"></a>1.签名认证的作用</h3><p>网络的安全，主要是网络信息安全，需要取相应的安全技术措施，提供适合的安全服务。数字签名机制作为保障网络信息安全的手段之一，可以解决伪造、抵赖、冒充和篡改问题。数字签名的目的之一就是在网络环境中代替传统的手工签字与印章，有着重要作用:<br>(1)防冒充(伪造)。私有密钥只有签名者自己知道，所以其他人不可能构造出正确的。<br>(2)可鉴别身份。由于传统的手工签名一般是双方直接见面的，身份自可一清二楚。在网络环境中，接收方必须能够鉴别发送方所宣称的身份。<br>(3)防篡改(防破坏信息的完整性)。对于传统的手工签字，假如要签署一份200页的合同，是仅仅在合同末尾签名呢？还是对每一页都签名？如果仅在合同末尾签名，对方会不偷换其中的几页? 而对于数字签名，签名与原有文件已经形成了一个混合的整体数据，不可能被篡改，从而保证了数据的完整性。<br>(4)防重放。如在日常生活中，A向B借了钱，同时写了一张借条给B，当A还钱的候，肯定要向B索回他写的借条撕毁，不然，恐怕他会再次用借条要求A还钱。在数字名中，如果采用了对签名报文添加流水号、时间戳等技术，可以防止重放攻击。<br>(5)防抵赖。如前所述，数字签名可以鉴别身份，不可能冒充伪造，那么，只要保好签名的报文，就好似保存好了手工签署的合同文本，也就是保留了证据，签名者就无法抵赖。那如果接收者确已收到对方的签名报文，却抵赖没有收到呢? 要预防接收者的抵赖。在数字签名体制中，要求接收者返回一个自己签名的表示收到的报文，给对方或者第三方或者引入第三方机制。如此操作，双方均不可抵赖。<br>(6)机密性(保密性)。有了机密性保证，截收攻击也就失效了。手工签字的文件(如同文本)是不具备保密性的，文件一旦丢失，其中的信息就极可能泄露。数字签名可以加密要签名的消息，当然，如果签名的报名不要求机密性，也可以不用加密。<br>保证信息传输的完整性、发送者的身份认证、防止交易中的抵赖发生。<br>数字签名技术是将摘要信息用发送者的私钥加密，与原文一起传送给接收者。接收者用自己的公钥解密被加密的摘要信息，然后用HASH函数对收到的原文产生一个摘要信息，与解密的摘要信息对比。如果相同，则说明收到的信息是完整的，在传输过程中没有被修改，否则说明信息被修改过，因此数字签名能够验证信息的完整性。<br>数字签名是个加密的过程，数字签名验证是个解密的过程。</p>
 <h3 id="2-生成证书"><a href="#2-生成证书" class="headerlink" title="2.生成证书"></a>2.生成证书</h3><p>使用已有RSA私钥生成自签名证书指令：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl req -newkey rsa:2048 -nodes -keyout rsa_private.key -x509 -days 365 -out cert.crt</span><br></pre></td></tr></table></figure>
@@ -245,7 +227,7 @@
 <td>contact email address</td>
 </tr>
 </tbody></table>
-<p><img src="https://docsin.uniontech.com/wp-content/uploads/2020/09/ca.png"><br>使用RSA私钥生成CSR签名请求指令：</p>
+<p><img src="https://raw.githubusercontent.com/lk27323/image/master/blog/ca.png"><br>使用RSA私钥生成CSR签名请求指令：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">openssl genrsa -aes256 -passout pass:111111 -out server.key 2048</span><br><span class="line">openssl req -new -key server.key -out server.csr</span><br></pre></td></tr></table></figure>
 <p>此后输入密码、server证书信息完成，也可以用命令行指定各类参数</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl req -new -key server.key -out server.csr -subj &quot;&#x2F;C&#x3D;XX&#x2F;ST&#x3D;XX&#x2F;L&#x3D;XX&#x2F;O&#x3D;XX&#x2F;OU&#x3D;XX&#x2F;CN&#x3D;XX&#x2F;emailAddress&#x3D;XX&quot;</span><br></pre></td></tr></table></figure>
@@ -383,11 +365,6 @@
       </div>
     </a>
   
-  
-    <a href="/2020/10/23/%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E6%B5%8B%E8%AF%95/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">博客搭建测试</div>
-      <i class="icon-circle-right"></i>
-    </a>
   
 </nav>
 
