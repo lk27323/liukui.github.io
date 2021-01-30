@@ -142,6 +142,106 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-SANE-study-note" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/01/30/SANE-study-note/">SANE study note</a>
+    </h1>
+  
+
+        
+        <a href="/2021/01/30/SANE-study-note/" class="archive-article-date">
+  	<time datetime="2021-01-30T08:21:19.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-01-30</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>此文主要记录在学习SANE的过程中的笔记。</p>
+<!-- TOC -->
+
+<ul>
+<li><a href="#%E4%B8%80%E4%BB%8B%E7%BB%8D">一、介绍</a></li>
+<li><a href="#%E4%BA%8C%E4%B8%BB%E8%A6%81%E6%8E%A5%E5%8F%A3">二、主要接口</a><ul>
+<li><a href="#1sane_init">1.sane_init()</a></li>
+<li><a href="#2sane_exit">2.sane_exit()</a></li>
+<li><a href="#3sane_get_device">3.sane_get_device()</a></li>
+<li><a href="#4sane_open">4.sane_open()</a></li>
+<li><a href="#5sane_close">5.sane_close()</a></li>
+<li><a href="#6sane_get_option_descriptor">6.sane_get_option_descriptor()</a></li>
+<li><a href="#7sane_control_option">7.sane_control_option()</a></li>
+<li><a href="#8sane_get_parameter">8.sane_get_parameter()</a></li>
+<li><a href="#9sane_start">9.sane_start()</a></li>
+<li><a href="#10sane_read">10.sane_read()</a></li>
+<li><a href="#11sane_cancel">11.sane_cancel()</a></li>
+<li><a href="#12sane_set_io_mode">12.sane_set_io_mode()</a></li>
+<li><a href="#13sane_get_select_fd">13.sane_get_select_fd()</a></li>
+<li><a href="#14sane_strstatus">14.sane_strstatus()</a></li>
+</ul>
+</li>
+<li><a href="#%E4%B8%89%E4%B8%BB%E8%A6%81%E6%B5%81%E7%A8%8B">三、主要流程</a></li>
+<li><a href="#%E5%9B%9B%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99">四、参考资料</a></li>
+</ul>
+<!-- /TOC -->
+<h2 id="一、介绍"><a href="#一、介绍" class="headerlink" title="一、介绍"></a>一、介绍</h2><h2 id="二、主要接口"><a href="#二、主要接口" class="headerlink" title="二、主要接口"></a>二、主要接口</h2><h3 id="1-sane-init"><a href="#1-sane-init" class="headerlink" title="1.sane_init()"></a>1.sane_init()</h3><h3 id="2-sane-exit"><a href="#2-sane-exit" class="headerlink" title="2.sane_exit()"></a>2.sane_exit()</h3><h3 id="3-sane-get-device"><a href="#3-sane-get-device" class="headerlink" title="3.sane_get_device()"></a>3.sane_get_device()</h3><h3 id="4-sane-open"><a href="#4-sane-open" class="headerlink" title="4.sane_open()"></a>4.sane_open()</h3><h3 id="5-sane-close"><a href="#5-sane-close" class="headerlink" title="5.sane_close()"></a>5.sane_close()</h3><h3 id="6-sane-get-option-descriptor"><a href="#6-sane-get-option-descriptor" class="headerlink" title="6.sane_get_option_descriptor()"></a>6.sane_get_option_descriptor()</h3><h3 id="7-sane-control-option"><a href="#7-sane-control-option" class="headerlink" title="7.sane_control_option()"></a>7.sane_control_option()</h3><h3 id="8-sane-get-parameter"><a href="#8-sane-get-parameter" class="headerlink" title="8.sane_get_parameter()"></a>8.sane_get_parameter()</h3><h3 id="9-sane-start"><a href="#9-sane-start" class="headerlink" title="9.sane_start()"></a>9.sane_start()</h3><h3 id="10-sane-read"><a href="#10-sane-read" class="headerlink" title="10.sane_read()"></a>10.sane_read()</h3><h3 id="11-sane-cancel"><a href="#11-sane-cancel" class="headerlink" title="11.sane_cancel()"></a>11.sane_cancel()</h3><h3 id="12-sane-set-io-mode"><a href="#12-sane-set-io-mode" class="headerlink" title="12.sane_set_io_mode()"></a>12.sane_set_io_mode()</h3><h3 id="13-sane-get-select-fd"><a href="#13-sane-get-select-fd" class="headerlink" title="13.sane_get_select_fd()"></a>13.sane_get_select_fd()</h3><h3 id="14-sane-strstatus"><a href="#14-sane-strstatus" class="headerlink" title="14.sane_strstatus()"></a>14.sane_strstatus()</h3><h2 id="三、主要流程"><a href="#三、主要流程" class="headerlink" title="三、主要流程"></a>三、主要流程</h2><h2 id="四、参考资料"><a href="#四、参考资料" class="headerlink" title="四、参考资料"></a>四、参考资料</h2><p><a target="_blank" rel="noopener" href="https://sane-project.gitlab.io/standard/1.06/net.html">sane-standard 1.06</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">学习笔记</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/01/30/SANE-study-note/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-uniontech-study-notes" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -239,7 +339,7 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>本文主要用来记录markdown的学习过程中的一些语法笔记，后期写作的时候忘记如何使用，打开这篇文档看一下就明白了。</p>
-<h3 id="1-文字"><a href="#1-文字" class="headerlink" title="1. 文字"></a><span id="jump1">1. 文字</span></h3><p><font color=red>我是什么颜色</font><br><font face="黑体">我是什么字体</font><br><font face="楷体">我是什么字体</font><br><font color=#008000>我是什么颜色</font><br><font size=5>我是什么尺寸</font><br><font face="黑体" color=green size=5>我是黑体，绿色，尺寸为5</font></p>
+<h3 id="1-文字"><a href="#1-文字" class="headerlink" title="1.文字"></a><span id="jump1">1.文字</span></h3><p><font color=red>我是什么颜色</font><br><font face="黑体">我是什么字体</font><br><font face="楷体">我是什么字体</font><br><font color=#008000>我是什么颜色</font><br><font size=5>我是什么尺寸</font><br><font face="黑体" color=green size=5>我是黑体，绿色，尺寸为5</font></p>
 <table><tr><td bgcolor=yellow>背景色yellow</td></tr></table>
 <center>居中对齐</center>
 <h1 style="text-align:center">居中对齐 </h1>
