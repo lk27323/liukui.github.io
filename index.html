@@ -163,32 +163,21 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>此文主要记录在学习SANE的过程中的笔记。</p>
-<!-- TOC -->
-
 <ul>
-<li><a href="#%E4%B8%80%E4%BB%8B%E7%BB%8D">一、介绍</a></li>
-<li><a href="#%E4%BA%8C%E4%B8%BB%E8%A6%81%E6%8E%A5%E5%8F%A3">二、主要接口</a><ul>
-<li><a href="#1sane_init">1.sane_init()</a></li>
-<li><a href="#2sane_exit">2.sane_exit()</a></li>
-<li><a href="#3sane_get_device">3.sane_get_device()</a></li>
-<li><a href="#4sane_open">4.sane_open()</a></li>
-<li><a href="#5sane_close">5.sane_close()</a></li>
-<li><a href="#6sane_get_option_descriptor">6.sane_get_option_descriptor()</a></li>
-<li><a href="#7sane_control_option">7.sane_control_option()</a></li>
-<li><a href="#8sane_get_parameter">8.sane_get_parameter()</a></li>
-<li><a href="#9sane_start">9.sane_start()</a></li>
-<li><a href="#10sane_read">10.sane_read()</a></li>
-<li><a href="#11sane_cancel">11.sane_cancel()</a></li>
-<li><a href="#12sane_set_io_mode">12.sane_set_io_mode()</a></li>
-<li><a href="#13sane_get_select_fd">13.sane_get_select_fd()</a></li>
-<li><a href="#14sane_strstatus">14.sane_strstatus()</a></li>
+<li><a href="#%E4%BB%8B%E7%BB%8D">介绍</a></li>
+<li><a href="#%E4%B8%BB%E8%A6%81%E6%8E%A5%E5%8F%A3">主要接口</a></li>
+<li><a href="#%E4%B8%BB%E8%A6%81%E6%B5%81%E7%A8%8B">主要流程</a></li>
+<li><a href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99">参考资料</a></li>
 </ul>
-</li>
-<li><a href="#%E4%B8%89%E4%B8%BB%E8%A6%81%E6%B5%81%E7%A8%8B">三、主要流程</a></li>
-<li><a href="#%E5%9B%9B%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99">四、参考资料</a></li>
-</ul>
-<!-- /TOC -->
-<h2 id="一、介绍"><a href="#一、介绍" class="headerlink" title="一、介绍"></a>一、介绍</h2><h2 id="二、主要接口"><a href="#二、主要接口" class="headerlink" title="二、主要接口"></a>二、主要接口</h2><h3 id="1-sane-init"><a href="#1-sane-init" class="headerlink" title="1.sane_init()"></a>1.sane_init()</h3><h3 id="2-sane-exit"><a href="#2-sane-exit" class="headerlink" title="2.sane_exit()"></a>2.sane_exit()</h3><h3 id="3-sane-get-device"><a href="#3-sane-get-device" class="headerlink" title="3.sane_get_device()"></a>3.sane_get_device()</h3><h3 id="4-sane-open"><a href="#4-sane-open" class="headerlink" title="4.sane_open()"></a>4.sane_open()</h3><h3 id="5-sane-close"><a href="#5-sane-close" class="headerlink" title="5.sane_close()"></a>5.sane_close()</h3><h3 id="6-sane-get-option-descriptor"><a href="#6-sane-get-option-descriptor" class="headerlink" title="6.sane_get_option_descriptor()"></a>6.sane_get_option_descriptor()</h3><h3 id="7-sane-control-option"><a href="#7-sane-control-option" class="headerlink" title="7.sane_control_option()"></a>7.sane_control_option()</h3><h3 id="8-sane-get-parameter"><a href="#8-sane-get-parameter" class="headerlink" title="8.sane_get_parameter()"></a>8.sane_get_parameter()</h3><h3 id="9-sane-start"><a href="#9-sane-start" class="headerlink" title="9.sane_start()"></a>9.sane_start()</h3><h3 id="10-sane-read"><a href="#10-sane-read" class="headerlink" title="10.sane_read()"></a>10.sane_read()</h3><h3 id="11-sane-cancel"><a href="#11-sane-cancel" class="headerlink" title="11.sane_cancel()"></a>11.sane_cancel()</h3><h3 id="12-sane-set-io-mode"><a href="#12-sane-set-io-mode" class="headerlink" title="12.sane_set_io_mode()"></a>12.sane_set_io_mode()</h3><h3 id="13-sane-get-select-fd"><a href="#13-sane-get-select-fd" class="headerlink" title="13.sane_get_select_fd()"></a>13.sane_get_select_fd()</h3><h3 id="14-sane-strstatus"><a href="#14-sane-strstatus" class="headerlink" title="14.sane_strstatus()"></a>14.sane_strstatus()</h3><h2 id="三、主要流程"><a href="#三、主要流程" class="headerlink" title="三、主要流程"></a>三、主要流程</h2><h2 id="四、参考资料"><a href="#四、参考资料" class="headerlink" title="四、参考资料"></a>四、参考资料</h2><p><a target="_blank" rel="noopener" href="https://sane-project.gitlab.io/standard/1.06/net.html">sane-standard 1.06</a></p>
+<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><h2 id="主要接口"><a href="#主要接口" class="headerlink" title="主要接口"></a>主要接口</h2><h3 id="SANE-Status-sane-init-SANE-Int-version-code-SANE-Authorization-Callback-authorize"><a href="#SANE-Status-sane-init-SANE-Int-version-code-SANE-Authorization-Callback-authorize" class="headerlink" title="SANE_Status sane_init (SANE_Int * version_code, SANE_Authorization_Callback authorize)"></a>SANE_Status sane_init (SANE_Int * version_code, SANE_Authorization_Callback authorize)</h3><p>sane_init()是整个sane流程最初始的一步，表示sane流程开始，初始化后端。</p>
+<h3 id="void-sane-exit-void"><a href="#void-sane-exit-void" class="headerlink" title="void sane_exit (void)"></a>void sane_exit (void)</h3><p>sane_exit()是整个sane流程最后一步，表示整个sane流程结束，退出后端。</p>
+<h3 id="SANE-Status-sane-get-devices-const-SANE-Device-device-list-SANE-Bool-local-only"><a href="#SANE-Status-sane-get-devices-const-SANE-Device-device-list-SANE-Bool-local-only" class="headerlink" title="SANE_Status sane_get_devices (const SANE_Device ***device_list, SANE_Bool local_only)"></a>SANE_Status sane_get_devices (const SANE_Device ***device_list, SANE_Bool local_only)</h3><p>sane_get_device()可以在sane_init()后的任一时刻调用，用来返回当前时刻的已知设备列表。</p>
+<h3 id="SANE-Status-sane-open-SANE-String-Const-name-SANE-Handle-h"><a href="#SANE-Status-sane-open-SANE-String-Const-name-SANE-Handle-h" class="headerlink" title="SANE_Status sane_open (SANE_String_Const name, SANE_Handle * h)"></a>SANE_Status sane_open (SANE_String_Const name, SANE_Handle * h)</h3><h3 id="void-sane-close-SANE-Handle-h"><a href="#void-sane-close-SANE-Handle-h" class="headerlink" title="void sane_close (SANE_Handle h)"></a>void sane_close (SANE_Handle h)</h3><p>在sane_cancel后调用此接口。此接口调用结束后，无法再使用句柄h。</p>
+<h3 id="const-SANE-Option-Descriptor-sane-get-option-descriptor-SANE-Handle-h-SANE-Int-n"><a href="#const-SANE-Option-Descriptor-sane-get-option-descriptor-SANE-Handle-h-SANE-Int-n" class="headerlink" title="const SANE_Option_Descriptor * sane_get_option_descriptor (SANE_Handle h, SANE_Int n)"></a>const SANE_Option_Descriptor * sane_get_option_descriptor (SANE_Handle h, SANE_Int n)</h3><p>sane_get_option_descriptor()用来获取指定设备的属性描述，</p>
+<h3 id="SANE-Status-sane-control-option-SANE-Handle-h-SANE-Int-n-SANE-Action-a-void-v-SANE-Int-i"><a href="#SANE-Status-sane-control-option-SANE-Handle-h-SANE-Int-n-SANE-Action-a-void-v-SANE-Int-i" class="headerlink" title="SANE_Status sane_control_option (SANE_Handle h, SANE_Int n, SANE_Action a, void * v, SANE_Int * i)"></a>SANE_Status sane_control_option (SANE_Handle h, SANE_Int n, SANE_Action a, void * v, SANE_Int * i)</h3><p>sane_control_option用于通过句柄h获取或者查询指定设备属性编号的当前值，选项的控制方式由参数a决定，该参数的可能值在下表中详细描述。<br>| Symbol | Code | Description |<br>| —-  | —-  | —-  |<br>| SANE_ACTION_GET_VALUE | 0 | 获取当前属性值 |<br>| SANE_ACTION_SET_VALUE | 1 | 设置属性值。如果无法精确设置通过参数v传递的选项值，则后端可能会对其进行修改。 |<br>| SANE_ACTION_SET_AUTO | 2 | 打开自动模式。后端会设备会自动选择最合适的属性值。在这种情况下，v的值会被忽略，并且可以为NULL |<br>v用来传递选项的参数值。</p>
+<h3 id="SANE-Status-sane-get-parameters-SANE-Handle-h-SANE-Parameters-p"><a href="#SANE-Status-sane-get-parameters-SANE-Handle-h-SANE-Parameters-p" class="headerlink" title="SANE_Status sane_get_parameters (SANE_Handle h, SANE_Parameters * p)"></a>SANE_Status sane_get_parameters (SANE_Handle h, SANE_Parameters * p)</h3><h3 id="SANE-Status-sane-start-SANE-Handle-h"><a href="#SANE-Status-sane-start-SANE-Handle-h" class="headerlink" title="SANE_Status sane_start (SANE_Handle h)"></a>SANE_Status sane_start (SANE_Handle h)</h3><p>sane_start()在设置完设备参数之后调用，开始获取图像。</p>
+<h3 id="SANE-Status-sane-read-SANE-Handle-h-SANE-Byte-buf-SANE-Int-maxlen-SANE-Int-len"><a href="#SANE-Status-sane-read-SANE-Handle-h-SANE-Byte-buf-SANE-Int-maxlen-SANE-Int-len" class="headerlink" title="SANE_Status sane_read (SANE_Handle h, SANE_Byte * buf, SANE_Int maxlen, SANE_Int * len)"></a>SANE_Status sane_read (SANE_Handle h, SANE_Byte * buf, SANE_Int maxlen, SANE_Int * len)</h3><h3 id="void-sane-cancel-SANE-Handle-h"><a href="#void-sane-cancel-SANE-Handle-h" class="headerlink" title="void sane_cancel (SANE_Handle h)"></a>void sane_cancel (SANE_Handle h)</h3><h3 id="SANE-Status-sane-set-io-mode-SANE-Handle-h-SANE-Bool-m"><a href="#SANE-Status-sane-set-io-mode-SANE-Handle-h-SANE-Bool-m" class="headerlink" title="SANE_Status sane_set_io_mode (SANE_Handle h, SANE_Bool m)"></a>SANE_Status sane_set_io_mode (SANE_Handle h, SANE_Bool m)</h3><h3 id="SANE-Status-sane-get-select-fd-SANE-Handle-h-SANE-Int-fd"><a href="#SANE-Status-sane-get-select-fd-SANE-Handle-h-SANE-Int-fd" class="headerlink" title="SANE_Status sane_get_select_fd (SANE_Handle h, SANE_Int *fd)"></a>SANE_Status sane_get_select_fd (SANE_Handle h, SANE_Int *fd)</h3><h3 id="const-SANE-String-Const-sane-strstatus-SANE-Status-status"><a href="#const-SANE-String-Const-sane-strstatus-SANE-Status-status" class="headerlink" title="const SANE_String_Const sane_strstatus (SANE_Status status)"></a>const SANE_String_Const sane_strstatus (SANE_Status status)</h3><h2 id="主要流程"><a href="#主要流程" class="headerlink" title="主要流程"></a>主要流程</h2><p>SANE的程序流程如下图所示，sane_init和sane_exit分别表示初始化和退出后端，其他所有程序调用必须在初始化和退出后端之间进行。<br><img src="https://raw.githubusercontent.com/lk27323/image/master/blog/sane_flow.svg" alt="sane_flow"></p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a target="_blank" rel="noopener" href="https://sane-project.gitlab.io/standard/1.06/net.html">sane-standard 1.06</a></p>
 
       
 
@@ -423,8 +412,9 @@ ps:center left right
     </tr>
 </table>
 
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/thither_shore/article/details/52328313">更多色值</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/thither_shore/article/details/52328313">更多色值</a><br><a href="#%E8%B7%B3%E8%BD%AC%E6%B5%8B%E8%AF%95">跳转到测试</a></p>
 <h3 id="4-锚点"><a href="#4-锚点" class="headerlink" title="4.锚点"></a><span id="jump4">4.锚点</span></h3><p><a href="#jump1">跳转到标题一</a><br><a href="#jump2">跳转到标题二</a><br><a href="#jump3">跳转到标题三</a><br><a href="#jump4">跳转到标题四</a></p>
+<h3 id="跳转测试"><a href="#跳转测试" class="headerlink" title="跳转测试"></a>跳转测试</h3><p>目前使用这种跳转方式，仅仅在标题是纯文字的情况下跳转，添加标点无法跳转，以后再深入研究一下。</p>
 
       
 
@@ -580,6 +570,7 @@ ps:center left right
 <h3 id="4-数学"><a href="#4-数学" class="headerlink" title="4.数学"></a>4.数学</h3><p>《离散数学及其应用》<br>《概率论与数理统计》<br>《线性代数》</p>
 <h3 id="5-数据结构"><a href="#5-数据结构" class="headerlink" title="5.数据结构"></a>5.数据结构</h3><p>《HEAD FIRST设计模式》<br>《设计模式：基于C#的工程化实现及扩展》</p>
 <h3 id="6-算法"><a href="#6-算法" class="headerlink" title="6.算法"></a>6.算法</h3><p>《算法导论》<br>《算法》（第四版）</p>
+<h3 id="7-电子社区"><a href="#7-电子社区" class="headerlink" title="7.电子社区"></a>7.电子社区</h3><p>(1)公众号<br>阿里社区<br>51CTO技术栈<br>架构师社区</p>
 
       
 
@@ -664,6 +655,10 @@ ps:center left right
 <h3 id="8-终端中配置代理"><a href="#8-终端中配置代理" class="headerlink" title="8.终端中配置代理"></a>8.终端中配置代理</h3><p>终端输入</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">set http_proxy&#x3D;127.0.0.1:4780</span><br><span class="line">set https_proxy&#x3D;127.0.0.1:4780</span><br></pre></td></tr></table></figure>
 <p>端口号在网络和Internet–&gt;代理中可以看到。<br>注意：不要输入ping <a target="_blank" rel="noopener" href="http://www.google.com/">www.google.com</a><br>ping的协议不是https，也不是https，是ICMP协议。<br>终端输入<br><code>curl -vv www.google.com</code><br>如果有数据，说明代理设置成功。</p>
+<h3 id="9-更改磁盘默认图标"><a href="#9-更改磁盘默认图标" class="headerlink" title="9.更改磁盘默认图标"></a>9.更改磁盘默认图标</h3><p>将一个ico后缀的图标文件命名为xxx.ico，放在根目录下，创建一个inf文件，命名为autorun.inf，内容写一下内容。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[autorun]</span><br><span class="line">icon&#x3D;xxx.ico</span><br></pre></td></tr></table></figure>
+<p>重启电脑即可</p>
+<h3 id="10-电脑自带截图工具"><a href="#10-电脑自带截图工具" class="headerlink" title="10.电脑自带截图工具"></a>10.电脑自带截图工具</h3><p>snippingtool</p>
 
       
 
@@ -1137,11 +1132,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">工具</a>
+                <a href="javascript:void(0)" class="js-tag color5">学习笔记</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">学习笔记</a>
+                <a href="javascript:void(0)" class="js-tag color3">工具</a>
               </li>
             
             <div class="clearfix"></div>
