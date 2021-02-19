@@ -6,19 +6,14 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>gscan2pdf编译 | 叶落无痕的学习之路</title>
+  <title>Archives | 叶落无痕的学习之路</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="本文主要记录了在gscan2pdf程序编译过程中遇到的问题。gscan2pdf官网 1.流程首先在官网下载gscan2pdf的安装包，得到一个gscan2pdf_2.11.0-1_all.deb安装包文件，使用dpkg安装。dpkg -i gscan2pdf_2.11.0-1_all.deb会提示缺少依赖，无法完成安装。或者下载gscan2pdf的源码，查看debian的control文件，查看需">
-<meta property="og:type" content="article">
-<meta property="og:title" content="gscan2pdf编译">
-<meta property="og:url" content="http://example.com/2021/02/03/gscan2pdf%E7%BC%96%E8%AF%91/index.html">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="叶落无痕的学习之路">
+<meta property="og:url" content="http://example.com/archives/page/2/index.html">
 <meta property="og:site_name" content="叶落无痕的学习之路">
-<meta property="og:description" content="本文主要记录了在gscan2pdf程序编译过程中遇到的问题。gscan2pdf官网 1.流程首先在官网下载gscan2pdf的安装包，得到一个gscan2pdf_2.11.0-1_all.deb安装包文件，使用dpkg安装。dpkg -i gscan2pdf_2.11.0-1_all.deb会提示缺少依赖，无法完成安装。或者下载gscan2pdf的源码，查看debian的control文件，查看需">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2021-02-03T05:31:25.000Z">
-<meta property="article:modified_time" content="2021-02-03T07:46:11.906Z">
 <meta property="article:author" content="LK">
-<meta property="article:tag" content="学习笔记">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="叶落无痕的学习之路" type="application/atom+xml">
@@ -145,66 +140,36 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-gscan2pdf编译" class="article article-type-post " itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
+            
   
-    <h1 class="article-title" itemprop="name">
-      gscan2pdf编译
+  
+    
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2020" class="archive-year">2020</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      	<div class="article-meta">
+	      	<a href="/2020/10/26/vmware%E4%BD%BF%E7%94%A8%E9%97%AE%E9%A2%98/" class="archive-article-date">
+  	<time datetime="2020-10-26T09:43:26.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-10-26</time>
+</a>
+        </div>
+    	 
+  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2020/10/26/vmware%E4%BD%BF%E7%94%A8%E9%97%AE%E9%A2%98/">vmware使用问题</a>
     </h1>
   
 
-        
-        <a href="/2021/02/03/gscan2pdf%E7%BC%96%E8%AF%91/" class="archive-article-date">
-  	<time datetime="2021-02-03T05:31:25.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-02-03</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>本文主要记录了在gscan2pdf程序编译过程中遇到的问题。<br><a target="_blank" rel="noopener" href="http://gscan2pdf.sourceforge.net/">gscan2pdf官网</a></p>
-<h2 id="1-流程"><a href="#1-流程" class="headerlink" title="1.流程"></a>1.流程</h2><p>首先在官网下载gscan2pdf的安装包，得到一个gscan2pdf_2.11.0-1_all.deb安装包文件，使用dpkg安装。<br><code>dpkg -i gscan2pdf_2.11.0-1_all.deb</code><br>会提示缺少依赖，无法完成安装。<br>或者下载gscan2pdf的源码，查看debian的control文件，查看需要哪些依赖。<br>接下来的任务就是找全需要的依赖并安装了。</p>
-<h2 id="2-依赖安装"><a href="#2-依赖安装" class="headerlink" title="2.依赖安装"></a>2.依赖安装</h2><p>查看control文件，发现需要这些依赖。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">Build-Depends-Indep: fonts-noto-extra,</span><br><span class="line">                     gettext,</span><br><span class="line">                     ghostscript,</span><br><span class="line">                     gsfonts,</span><br><span class="line">                     imagemagick,</span><br><span class="line">                     libatk-adaptor,</span><br><span class="line">                     libconfig-general-perl (&gt;&#x3D; 2.40),</span><br><span class="line">                     libdate-calc-perl,</span><br><span class="line">                     libgoocanvas2-perl,</span><br><span class="line">                     libgtk3-imageview-perl,</span><br><span class="line">                     libgtk3-simplelist-perl,</span><br><span class="line">                     libhtml-parser-perl,</span><br><span class="line">                     libimage-magick-perl,</span><br><span class="line">                     libimage-sane-perl,</span><br><span class="line">                     libipc-system-simple-perl,</span><br><span class="line">                     liblocale-codes-perl (&gt;&#x3D; 3.60),</span><br><span class="line">                     liblocale-gettext-perl (&gt;&#x3D; 1.05),</span><br><span class="line">                     liblog-log4perl-perl,</span><br><span class="line">                     liblist-moreutils-perl,</span><br><span class="line">                     libossp-uuid-perl | libdata-uuid-perl,</span><br><span class="line">                     libpdf-builder-perl,</span><br><span class="line">                     libproc-processtable-perl,</span><br><span class="line">                     libreadonly-perl,</span><br><span class="line">                     librsvg2-common,</span><br><span class="line">                     libset-intspan-perl (&gt;&#x3D; 1.10),</span><br><span class="line">                     libsub-override-perl,</span><br><span class="line">                     libtest-pod-perl,</span><br><span class="line">                     libtiff-tools,</span><br><span class="line">                     libtry-tiny-perl,</span><br><span class="line">                     perl (&gt;&#x3D; 5.8.0-7),</span><br><span class="line">                     poppler-utils,</span><br><span class="line">                     sane-utils (&gt;&#x3D; 1.0.17),</span><br><span class="line">                     xauth,</span><br><span class="line">                     xfonts-base,</span><br><span class="line">                     xvfb</span><br></pre></td></tr></table></figure>
-<p>其中有些依赖系统中已经安装过，用apt-cache policy可以直接看到版本号，符合要求的就不用管了。<br>有些依赖系统中存在，用apt-get install直接安装就行。<br>其他系统中没有的依赖，就需要手动下载源码编译了。</p>
-<h3 id="2-1-libgtk3-imageview-perl"><a href="#2-1-libgtk3-imageview-perl" class="headerlink" title="2.1 libgtk3-imageview-perl"></a>2.1 libgtk3-imageview-perl</h3><p>这个依赖是遇到的第一个需要手动编译的依赖。<br>首先去官网下载gtk3-imageview的源码包，根据帮助文档进行编译</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">perl Makefile.PL</span><br><span class="line">make</span><br><span class="line">make test</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
-<p>遇到一个报错<br><code>Can&#39;t locate Image/Magick.pm in @INC (you may need to install the Image::Magick module)</code><br>于是去<a target="_blank" rel="noopener" href="https://www.imagemagick.org/script/download.php#unix">官网</a>下载ImageMagick的源码进行编译。<br>编译ImageMagick需要perl，需要安装libperl-dev,参考<a target="_blank" rel="noopener" href="https://askubuntu.com/questions/627128/cant-install-cpan-module-imagemagick">这篇问答</a>成功安装。<br>执行display时没有出现预期logo，是因为没有设置ldconfig<br>运行以下指令<br><code>sudo ldconfig /usr/local/bin</code><br>即可解决。</p>
-<p>继续编译，遇到第二个错误<br><code>Can&#39;t locate Readonly.pm in @INC (you may need to install the Readonly module)</code><br>去<a target="_blank" rel="noopener" href="http://search.cpan.org/~roode/Readonly-1.03/Readonly.pm">官网</a>下载readonly源码编译。</p>
-<p>继续编译，遇到第三个错误<br><code>Can&#39;t locate Test/Differences.pm in @INC (you may need to install the Test::Differences module)</code><br>像这种类似的问题，直接去<a target="_blank" rel="noopener" href="https://metacpan.org/">官网</a>下载对应的pm源码，然后编译安装就行了。</p>
-<p>手动编译了几个，发现有自动安装的方法，终端输入<br><code>perl -MCPAN -e shell</code><br>选择sudo，需要安装什么模块，就输入install xxx:xxx即可自动安装。</p>
-
-      
-
-      
-        <div class="page-reward">
-          <a href="javascript:;" class="page-reward-btn tooltip-top">
-            <div class="tooltip tooltip-east">
-            <span class="tooltip-item">
-              赏
-            </span>
-            <span class="tooltip-content">
-              <span class="tooltip-text">
-                <span class="tooltip-inner">
-                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
-                  <div class="reward-box">
-                    
-                    
-                  </div>
-                </span>
-              </span>
-            </span>
-          </div>
-          </a>
-        </div>
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
+        <div class="article-info info-on-right">
+          
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -216,114 +181,60 @@
 		</ul>
 	</div>
 
-      
+          
 
-      
-
-      
-        
-<div class="share-btn share-icons tooltip-left">
-  <div class="tooltip tooltip-east">
-    <span class="tooltip-item">
-      <a href="javascript:;" class="share-sns share-outer">
-        <i class="icon icon-share"></i>
-      </a>
-    </span>
-    <span class="tooltip-content">
-      <div class="share-wrap">
-        <div class="share-icons">
-          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
-            <i class="icon icon-weibo"></i>
-          </a>
-          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
-            <i class="icon icon-weixin"></i>
-          </a>
-          <a class="qq share-sns" href="javascript:;" data-type="qq">
-            <i class="icon icon-qq"></i>
-          </a>
-          <a class="douban share-sns" href="javascript:;" data-type="douban">
-            <i class="icon icon-douban"></i>
-          </a>
-          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
-            <i class="icon icon-qzone"></i>
-          </a>
-          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
-            <i class="icon icon-facebook"></i>
-          </a>
-          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
-            <i class="icon icon-twitter"></i>
-          </a>
-          <a class="google share-sns" href="javascript:;" data-type="google">
-            <i class="icon icon-google"></i>
-          </a>
         </div>
-      </div>
-    </span>
-  </div>
-</div>
-
-<div class="page-modal wx-share js-wx-box">
-    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
-    <p>扫一扫，分享到微信</p>
-    <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2021/02/03/gscan2pdf%E7%BC%96%E8%AF%91/" alt="微信分享二维码">
-    </div>
-</div>
-
-<div class="mask js-mask"></div>
-      
-      <div class="clearfix"></div>
-    </div>
+        <div class="clearfix"></div>
+    </header>
   </div>
 </article>
-
   
-<nav id="article-nav">
-  
-    <a href="/2021/02/05/Use-of-Git/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          Use of Git
-        
-      </div>
-    </a>
-  
-  
-    <a href="/2021/01/30/SANE-study-note/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">SANE study note</div>
-      <i class="icon-circle-right"></i>
-    </a>
-  
-</nav>
-
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
+    
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      	<div class="article-meta">
+	      	<a href="/2020/10/23/%E5%8A%A0%E5%AF%86%E8%A7%A3%E5%AF%86%E5%8F%8A%E7%AD%BE%E5%90%8D%E8%AE%A4%E8%AF%81/" class="archive-article-date">
+  	<time datetime="2020-10-23T07:09:34.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-10-23</time>
+</a>
         </div>
-        
-        
-    </div>
-</aside>
-
-
-
+    	 
   
-  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2020/10/23/%E5%8A%A0%E5%AF%86%E8%A7%A3%E5%AF%86%E5%8F%8A%E7%AD%BE%E5%90%8D%E8%AE%A4%E8%AF%81/">加密解密及签名认证</a>
+    </h1>
   
 
+        <div class="article-info info-on-right">
+          
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">学习笔记</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+          
+
+        </div>
+        <div class="clearfix"></div>
+    </header>
+  </div>
+</article>
+  
+  
+    </div></section>
   
 
-  
-
+    
+    <nav id="page-nav">
+      <a class="extend prev" rel="prev" href="/archives/">&amp;laquo; Prev</a><a class="page-number" href="/archives/">1</a><span class="page-number current">2</span>
+    </nav>
   
 
 
@@ -347,8 +258,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: true,
-		isArchive: false,
+		isPost: false,
+		isArchive: true,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,

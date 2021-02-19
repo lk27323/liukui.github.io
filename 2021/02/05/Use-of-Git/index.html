@@ -6,17 +6,17 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>gscan2pdf编译 | 叶落无痕的学习之路</title>
+  <title>Use of Git | 叶落无痕的学习之路</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="本文主要记录了在gscan2pdf程序编译过程中遇到的问题。gscan2pdf官网 1.流程首先在官网下载gscan2pdf的安装包，得到一个gscan2pdf_2.11.0-1_all.deb安装包文件，使用dpkg安装。dpkg -i gscan2pdf_2.11.0-1_all.deb会提示缺少依赖，无法完成安装。或者下载gscan2pdf的源码，查看debian的control文件，查看需">
+  <meta name="description" content="此文用于记录在使用git过程中学习到的指令及用法。 1.git安装与配置安装linux系统上直接apt安装git即可，windows系统去官网下载git客户端，安装即可。 配置12git config --global user.name &quot;your name&quot;git config --global user.email &quot;your email&quot; 可以用以下">
 <meta property="og:type" content="article">
-<meta property="og:title" content="gscan2pdf编译">
-<meta property="og:url" content="http://example.com/2021/02/03/gscan2pdf%E7%BC%96%E8%AF%91/index.html">
+<meta property="og:title" content="Use of Git">
+<meta property="og:url" content="http://example.com/2021/02/05/Use-of-Git/index.html">
 <meta property="og:site_name" content="叶落无痕的学习之路">
-<meta property="og:description" content="本文主要记录了在gscan2pdf程序编译过程中遇到的问题。gscan2pdf官网 1.流程首先在官网下载gscan2pdf的安装包，得到一个gscan2pdf_2.11.0-1_all.deb安装包文件，使用dpkg安装。dpkg -i gscan2pdf_2.11.0-1_all.deb会提示缺少依赖，无法完成安装。或者下载gscan2pdf的源码，查看debian的control文件，查看需">
+<meta property="og:description" content="此文用于记录在使用git过程中学习到的指令及用法。 1.git安装与配置安装linux系统上直接apt安装git即可，windows系统去官网下载git客户端，安装即可。 配置12git config --global user.name &quot;your name&quot;git config --global user.email &quot;your email&quot; 可以用以下">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2021-02-03T05:31:25.000Z">
-<meta property="article:modified_time" content="2021-02-03T07:46:11.906Z">
+<meta property="article:published_time" content="2021-02-05T05:36:41.000Z">
+<meta property="article:modified_time" content="2021-02-05T06:25:15.730Z">
 <meta property="article:author" content="LK">
 <meta property="article:tag" content="学习笔记">
 <meta name="twitter:card" content="summary">
@@ -145,38 +145,40 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-gscan2pdf编译" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-Use-of-Git" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      gscan2pdf编译
+      Use of Git
     </h1>
   
 
         
-        <a href="/2021/02/03/gscan2pdf%E7%BC%96%E8%AF%91/" class="archive-article-date">
-  	<time datetime="2021-02-03T05:31:25.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-02-03</time>
+        <a href="/2021/02/05/Use-of-Git/" class="archive-article-date">
+  	<time datetime="2021-02-05T05:36:41.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-02-05</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>本文主要记录了在gscan2pdf程序编译过程中遇到的问题。<br><a target="_blank" rel="noopener" href="http://gscan2pdf.sourceforge.net/">gscan2pdf官网</a></p>
-<h2 id="1-流程"><a href="#1-流程" class="headerlink" title="1.流程"></a>1.流程</h2><p>首先在官网下载gscan2pdf的安装包，得到一个gscan2pdf_2.11.0-1_all.deb安装包文件，使用dpkg安装。<br><code>dpkg -i gscan2pdf_2.11.0-1_all.deb</code><br>会提示缺少依赖，无法完成安装。<br>或者下载gscan2pdf的源码，查看debian的control文件，查看需要哪些依赖。<br>接下来的任务就是找全需要的依赖并安装了。</p>
-<h2 id="2-依赖安装"><a href="#2-依赖安装" class="headerlink" title="2.依赖安装"></a>2.依赖安装</h2><p>查看control文件，发现需要这些依赖。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">Build-Depends-Indep: fonts-noto-extra,</span><br><span class="line">                     gettext,</span><br><span class="line">                     ghostscript,</span><br><span class="line">                     gsfonts,</span><br><span class="line">                     imagemagick,</span><br><span class="line">                     libatk-adaptor,</span><br><span class="line">                     libconfig-general-perl (&gt;&#x3D; 2.40),</span><br><span class="line">                     libdate-calc-perl,</span><br><span class="line">                     libgoocanvas2-perl,</span><br><span class="line">                     libgtk3-imageview-perl,</span><br><span class="line">                     libgtk3-simplelist-perl,</span><br><span class="line">                     libhtml-parser-perl,</span><br><span class="line">                     libimage-magick-perl,</span><br><span class="line">                     libimage-sane-perl,</span><br><span class="line">                     libipc-system-simple-perl,</span><br><span class="line">                     liblocale-codes-perl (&gt;&#x3D; 3.60),</span><br><span class="line">                     liblocale-gettext-perl (&gt;&#x3D; 1.05),</span><br><span class="line">                     liblog-log4perl-perl,</span><br><span class="line">                     liblist-moreutils-perl,</span><br><span class="line">                     libossp-uuid-perl | libdata-uuid-perl,</span><br><span class="line">                     libpdf-builder-perl,</span><br><span class="line">                     libproc-processtable-perl,</span><br><span class="line">                     libreadonly-perl,</span><br><span class="line">                     librsvg2-common,</span><br><span class="line">                     libset-intspan-perl (&gt;&#x3D; 1.10),</span><br><span class="line">                     libsub-override-perl,</span><br><span class="line">                     libtest-pod-perl,</span><br><span class="line">                     libtiff-tools,</span><br><span class="line">                     libtry-tiny-perl,</span><br><span class="line">                     perl (&gt;&#x3D; 5.8.0-7),</span><br><span class="line">                     poppler-utils,</span><br><span class="line">                     sane-utils (&gt;&#x3D; 1.0.17),</span><br><span class="line">                     xauth,</span><br><span class="line">                     xfonts-base,</span><br><span class="line">                     xvfb</span><br></pre></td></tr></table></figure>
-<p>其中有些依赖系统中已经安装过，用apt-cache policy可以直接看到版本号，符合要求的就不用管了。<br>有些依赖系统中存在，用apt-get install直接安装就行。<br>其他系统中没有的依赖，就需要手动下载源码编译了。</p>
-<h3 id="2-1-libgtk3-imageview-perl"><a href="#2-1-libgtk3-imageview-perl" class="headerlink" title="2.1 libgtk3-imageview-perl"></a>2.1 libgtk3-imageview-perl</h3><p>这个依赖是遇到的第一个需要手动编译的依赖。<br>首先去官网下载gtk3-imageview的源码包，根据帮助文档进行编译</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">perl Makefile.PL</span><br><span class="line">make</span><br><span class="line">make test</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
-<p>遇到一个报错<br><code>Can&#39;t locate Image/Magick.pm in @INC (you may need to install the Image::Magick module)</code><br>于是去<a target="_blank" rel="noopener" href="https://www.imagemagick.org/script/download.php#unix">官网</a>下载ImageMagick的源码进行编译。<br>编译ImageMagick需要perl，需要安装libperl-dev,参考<a target="_blank" rel="noopener" href="https://askubuntu.com/questions/627128/cant-install-cpan-module-imagemagick">这篇问答</a>成功安装。<br>执行display时没有出现预期logo，是因为没有设置ldconfig<br>运行以下指令<br><code>sudo ldconfig /usr/local/bin</code><br>即可解决。</p>
-<p>继续编译，遇到第二个错误<br><code>Can&#39;t locate Readonly.pm in @INC (you may need to install the Readonly module)</code><br>去<a target="_blank" rel="noopener" href="http://search.cpan.org/~roode/Readonly-1.03/Readonly.pm">官网</a>下载readonly源码编译。</p>
-<p>继续编译，遇到第三个错误<br><code>Can&#39;t locate Test/Differences.pm in @INC (you may need to install the Test::Differences module)</code><br>像这种类似的问题，直接去<a target="_blank" rel="noopener" href="https://metacpan.org/">官网</a>下载对应的pm源码，然后编译安装就行了。</p>
-<p>手动编译了几个，发现有自动安装的方法，终端输入<br><code>perl -MCPAN -e shell</code><br>选择sudo，需要安装什么模块，就输入install xxx:xxx即可自动安装。</p>
+        <p>此文用于记录在使用git过程中学习到的指令及用法。</p>
+<h3 id="1-git安装与配置"><a href="#1-git安装与配置" class="headerlink" title="1.git安装与配置"></a>1.git安装与配置</h3><h4 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h4><p>linux系统上直接apt安装git即可，windows系统去<a target="_blank" rel="noopener" href="https://git-scm.com/">官网</a>下载git客户端，安装即可。</p>
+<h4 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config --global user.name &quot;your name&quot;</span><br><span class="line">git config --global user.email &quot;your email&quot;</span><br></pre></td></tr></table></figure>
+<p>可以用以下指令查看git配置<br><code>git config --list</code></p>
+<h4 id="生成ssh"><a href="#生成ssh" class="headerlink" title="生成ssh"></a>生成ssh</h4><p>使用<a target="_blank" rel="noopener" href="https://docs.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh">ssh</a>协议，不用每次操作都进行认证，比较方便。<br><code>ssh-keygen -t rsa -C &quot;your.email@example.com&quot; -b 4096</code><br>连续回车3次<br>生成的ssh-key在~/.ssh/id_rsa.pub文件中。<br>将此密钥粘贴到git服务端的用户设置中即可。</p>
+<h3 id="2-git使用"><a href="#2-git使用" class="headerlink" title="2.git使用"></a>2.git使用</h3><h4 id="个人维护"><a href="#个人维护" class="headerlink" title="个人维护"></a>个人维护</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git clone XXXX</span><br><span class="line">git add -u &#x2F; git add .</span><br><span class="line">git commit -m &quot;XXXX&quot; &#x2F; git commit</span><br><span class="line">git push origin</span><br></pre></td></tr></table></figure>
+<p>个人维护的情况，不用考虑其他人对此仓库的更改，每次修改完了直接将改动推到远程即可。</p>
+<h4 id="多人维护"><a href="#多人维护" class="headerlink" title="多人维护"></a>多人维护</h4><h5 id="非fork模式"><a href="#非fork模式" class="headerlink" title="非fork模式"></a>非fork模式</h5><p>多人开发，就需要注意每个人代码的合并问题，一般采取所有人维护master主干，开发的时候在各自的分支开发，然后合并到master主干分支上，提交前注意git pull 更新最新的代码，因为你的代码提交可能落后master。这种情况适用于共同维护一个远程仓库。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">git checkout master</span><br><span class="line">git pull origin master</span><br><span class="line">git checkout yourbranch</span><br><span class="line">git rebase master</span><br><span class="line">git rebase --continue</span><br><span class="line">git push origin master #默认将本地master分支push到远程的master分支</span><br><span class="line">git push origin master:dev #将本地master分支push到远程dev分支</span><br></pre></td></tr></table></figure>
+<p>说明：git rebase master 可以理解为合并master分支上进度到当前自己的分支，如果没有冲突，那么直接git push，如果存在冲突，那么根据提示去相应的文件，手动合并冲突，合并完了执行git rebase –continue。git push origin master:master/dev 其中master是你的本地分支名，master/dev是你的远程分支名。然后去网站上提交合并申请，然后有master合并权限的用户审核代码，他可以合并本次提交，也可以不合并。</p>
+<h5 id="fork模式"><a href="#fork模式" class="headerlink" title="fork模式"></a>fork模式</h5><p>这种模式适用于fork原始仓库，更新维护自己仓库，并将自己的仓库的更新提交merge request到主干仓库。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">git clone xxxxxxxx #克隆自己的仓库到本地</span><br><span class="line">git remote add upstream xxxxxxxxx #将主干仓库添加到自己git仓库中</span><br><span class="line">git remote -v #查看所有远程仓库地址</span><br><span class="line">#修改代码</span><br><span class="line">git diff #比较工作区和暂存区之间的变化 --filename 比较指定的文件差异</span><br><span class="line">git add -u #-u是为了只将已经在暂存区的内容的修改加到暂存区</span><br><span class="line">git diff --cached #比较的是暂存区和分支最新版本</span><br><span class="line">git commit -m &quot;message&quot;</span><br><span class="line">git fetch upstream</span><br><span class="line">git rebase upstream&#x2F;master</span><br><span class="line">#如果出现冲突,先手动解决冲突</span><br><span class="line">git add -u</span><br><span class="line">git rebase --continue </span><br><span class="line">#如果没有冲突，那么直接push即可</span><br><span class="line">git push origin master #默认将本地master分支push到远程的master分支</span><br><span class="line">git push origin master:dev #将本地master分支push到远程dev分支</span><br><span class="line">#最后去网站上提交合并请求</span><br></pre></td></tr></table></figure>
 
+<h3 id="3-git指令"><a href="#3-git指令" class="headerlink" title="3.git指令"></a>3.git指令</h3><h4 id="删除某个commit信息"><a href="#删除某个commit信息" class="headerlink" title="删除某个commit信息"></a>删除某个commit信息</h4>
       
 
       
@@ -266,7 +268,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2021/02/03/gscan2pdf%E7%BC%96%E8%AF%91/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2021/02/05/Use-of-Git/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -280,18 +282,18 @@
   
 <nav id="article-nav">
   
-    <a href="/2021/02/05/Use-of-Git/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2021/02/19/SANE-WIA-note/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          Use of Git
+          SANE-WIA-note
         
       </div>
     </a>
   
   
-    <a href="/2021/01/30/SANE-study-note/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">SANE study note</div>
+    <a href="/2021/02/03/gscan2pdf%E7%BC%96%E8%AF%91/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">gscan2pdf编译</div>
       <i class="icon-circle-right"></i>
     </a>
   
