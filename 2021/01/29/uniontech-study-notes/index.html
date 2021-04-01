@@ -8,15 +8,15 @@
   <link rel="dns-prefetch" href="http://example.com">
   <title>uniontech study notes | 叶落无痕的学习之路</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="此文主要记录在统信工作过程中记录下来的一些小知识点。 1.帮助文档程序帮助文档存放在一下目录。&#x2F;usr&#x2F;share&#x2F;deepin-manual&#x2F;manual-assets在源代码中，使用一下代码，程序会自动加载指定帮助文档并生成帮助菜单栏。 12app.setOrganizationName(&quot;deepin&quot;);app.setApplicationName(&quot;deep">
+  <meta name="description" content="此文主要记录在统信工作过程中记录下来的一些小知识点。 1.帮助文档程序帮助文档存放在以下目录。&#x2F;usr&#x2F;share&#x2F;deepin-manual&#x2F;manual-assets在源代码中，使用一下代码，程序会自动加载指定帮助文档并生成帮助菜单栏。 12app.setOrganizationName(&quot;deepin&quot;);app.setApplicationName(&quot;deep">
 <meta property="og:type" content="article">
 <meta property="og:title" content="uniontech study notes">
 <meta property="og:url" content="http://example.com/2021/01/29/uniontech-study-notes/index.html">
 <meta property="og:site_name" content="叶落无痕的学习之路">
-<meta property="og:description" content="此文主要记录在统信工作过程中记录下来的一些小知识点。 1.帮助文档程序帮助文档存放在一下目录。&#x2F;usr&#x2F;share&#x2F;deepin-manual&#x2F;manual-assets在源代码中，使用一下代码，程序会自动加载指定帮助文档并生成帮助菜单栏。 12app.setOrganizationName(&quot;deepin&quot;);app.setApplicationName(&quot;deep">
+<meta property="og:description" content="此文主要记录在统信工作过程中记录下来的一些小知识点。 1.帮助文档程序帮助文档存放在以下目录。&#x2F;usr&#x2F;share&#x2F;deepin-manual&#x2F;manual-assets在源代码中，使用一下代码，程序会自动加载指定帮助文档并生成帮助菜单栏。 12app.setOrganizationName(&quot;deepin&quot;);app.setApplicationName(&quot;deep">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2021-01-29T06:34:50.000Z">
-<meta property="article:modified_time" content="2021-01-29T06:42:22.197Z">
+<meta property="article:modified_time" content="2021-03-04T01:40:11.606Z">
 <meta property="article:author" content="LK">
 <meta property="article:tag" content="学习笔记">
 <meta name="twitter:card" content="summary">
@@ -166,8 +166,10 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>此文主要记录在统信工作过程中记录下来的一些小知识点。</p>
-<h4 id="1-帮助文档"><a href="#1-帮助文档" class="headerlink" title="1.帮助文档"></a>1.帮助文档</h4><p>程序帮助文档存放在一下目录。<br><code>/usr/share/deepin-manual/manual-assets</code><br>在源代码中，使用一下代码，程序会自动加载指定帮助文档并生成帮助菜单栏。</p>
+<h4 id="1-帮助文档"><a href="#1-帮助文档" class="headerlink" title="1.帮助文档"></a>1.帮助文档</h4><p>程序帮助文档存放在以下目录。<br><code>/usr/share/deepin-manual/manual-assets</code><br>在源代码中，使用一下代码，程序会自动加载指定帮助文档并生成帮助菜单栏。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">app.setOrganizationName(&quot;deepin&quot;);</span><br><span class="line">app.setApplicationName(&quot;deepin-cloud-scan&quot;);</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-环境变量"><a href="#2-环境变量" class="headerlink" title="2.环境变量"></a>2.环境变量</h4><h5 id="1-Qt日志环境变量"><a href="#1-Qt日志环境变量" class="headerlink" title="1.Qt日志环境变量"></a>1.Qt日志环境变量</h5><p><code>echo $QT_LOGGING_RULES</code><br>用以上指令查看当前环境下的qt日志输出规则。<br>修改以下文件中QT_LOGGING_RULES后的值可以修改日志输出规则。<br><code>/etc/X11/Xsession.d/00deepin-dde-env</code></p>
 
       
 
