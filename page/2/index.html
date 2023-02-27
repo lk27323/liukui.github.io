@@ -161,6 +161,338 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-Use-of-ASAN" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/09/08/Use-of-ASAN/">Use of ASAN</a>
+    </h1>
+  
+
+        
+        <a href="/2021/09/08/Use-of-ASAN/" class="archive-article-date">
+  	<time datetime="2021-09-08T06:01:17.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-09-08</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>此文用于记录使用ASAN对程序进行内存检测的用法。  </p>
+<h1 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h1><h2 id="1-简介"><a href="#1-简介" class="headerlink" title="1.简介"></a>1.简介</h2><p>ASAN（AddressSanitizer的缩写）是一款面向C/C++语言的内存错误问题检查工具,是Google旗下的一个内存问题检测工具，项目地址：<a target="_blank" rel="noopener" href="https://github.com/google/sanitizers/wiki/AddressSanitizer">AddressSanitizer
+</a>，可以检测如下内存问题：</p>
+<ul>
+<li>使用已释放内存（野指针）  </li>
+<li>堆内存越界（读写）  </li>
+<li>栈内存越界（读写）  </li>
+<li>全局变量越界（读写）  </li>
+<li>函数返回局部变量  </li>
+<li>内存泄漏  </li>
+</ul>
+<h2 id="2-名词解释"><a href="#2-名词解释" class="headerlink" title="2.名词解释"></a>2.名词解释</h2><p>它与传统的内存问题检测工具，例如Valgrind，有何区别？<br>Valgrind会极大的降低程序运行速度，大约降低10倍，而 AddressSanitizer 大约只降低2倍。</p>
+<p>ASAN工具主要由两部分组成：</p>
+<ul>
+<li>编译器插桩模块  </li>
+<li>运行时库  </li>
+</ul>
+<p>运行时库：（libasan.so.x）会接管malloc和``free函数。malloc执行完后，已分配内存的前后（称为“红区”）会被标记为“中毒”状态，而释放的内存则会被隔离起来（暂时不会分配出去）且也会被标记为“中毒”状态。  </p>
+<p>编译器插桩模块：加了ASAN相关的编译选项后，代码中的每一次内存访问操作都会被编译器修改为如下方式：</p>
+<p>编译前:   </p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">*address = ...;  <span class="comment">// or: ... = *address;</span></span><br></pre></td></tr></table></figure>
+
+<p>编译后：  </p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (IsPoisoned(address)) &#123;</span><br><span class="line">  ReportError(address, kAccessSize, kIsWrite);</span><br><span class="line">&#125;</span><br><span class="line">*address = ...;  <span class="comment">// or: ... = *address;</span></span><br></pre></td></tr></table></figure>
+
+<p>该方式的关键点就在于读写内存前会判断地址是否处于“中毒”状态，还有如何把IsPoisoned实现的非常快，把ReportError实现的非常紧凑，从而避免插入的代码过多。  </p>
+<h1 id="二、使用方法"><a href="#二、使用方法" class="headerlink" title="二、使用方法"></a>二、使用方法</h1><h2 id="1-给项目添加ASAN"><a href="#1-给项目添加ASAN" class="headerlink" title="1.给项目添加ASAN"></a>1.给项目添加ASAN</h2><h3 id="1-获取源代码及安装依赖"><a href="#1-获取源代码及安装依赖" class="headerlink" title="(1) 获取源代码及安装依赖"></a>(1) 获取源代码及安装依赖</h3><p>使用git clone获取项目源代码；<br>安装应用所需依赖，可以使用<code>sudo apt build-dep 应用名</code>快速安装应用所需所有依赖。  </p>
+<h3 id="2-修改编译选项"><a href="#2-修改编译选项" class="headerlink" title="(2) 修改编译选项"></a>(2) 修改编译选项</h3><p>对于一般项目对全部的cmakelists.txt添加以下选项：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">set</span>(CMAKE_C_FLAGS <span class="string">&quot;$&#123;CMAKE_C_FLAGS&#125; -g -fsanitize=undefined,</span></span><br><span class="line"><span class="string">address -O2&quot;</span>)</span><br><span class="line"><span class="built_in">set</span>(CMAKE_CXX_FLAGS <span class="string">&quot;$&#123;CMAKE_CXX_FLAGS&#125; -g -fsanitize=undefined,</span></span><br><span class="line"><span class="string">address -O2&quot;</span>)</span><br><span class="line">```  </span><br><span class="line"></span><br><span class="line">对于QT项目可以在所有的 .pri和.pro文件末尾添加如下内容：</span><br><span class="line">```C++</span><br><span class="line">QMAKE_CXX += -g -fsanitize=undefined,address -O2</span><br><span class="line">QMAKE_CXXFLAGS += -g -fsanitize=undefined,address -O2</span><br><span class="line">QMAKE_LFLAGS += -g -fsanitize=undefined,address -O2</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-编译"><a href="#3-编译" class="headerlink" title="(3) 编译"></a>(3) 编译</h3><p><code>cmake   make</code> 或者<code>qmake make</code>重新编译工程，生成二进制文件。</p>
+<h3 id="4-确认ASAN添加成功"><a href="#4-确认ASAN添加成功" class="headerlink" title="(4) 确认ASAN添加成功"></a>(4) 确认ASAN添加成功</h3><p>必须确认是否添加成功，否则无效。<br>检测方式：<code>ldd +可执行文件路径</code><br>如果结果中有libasan.so，表示ASAN添加成功。</p>
+<h2 id="2-解包和打包"><a href="#2-解包和打包" class="headerlink" title="2.解包和打包"></a>2.解包和打包</h2><h3 id="（1）-解deb包"><a href="#（1）-解deb包" class="headerlink" title="（1） 解deb包"></a>（1） 解deb包</h3><p>准备工作  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkdir extract</span><br><span class="line">mkdir extract&#x2F;DEBIAN</span><br><span class="line">mkdir build</span><br></pre></td></tr></table></figure>
+
+<p>解压出包中的文件到extract目录下（xxxxxxxxx.deb为待测试包）<br><code>dpkg -X ./xxxxxxxxx.deb extract/</code><br>解压出包的控制信息extract/DEBIAN/下：<br><code>dpkg -e ./xxxxxxxxx.deb extract/DEBIAN/</code>  </p>
+<h3 id="（2）-替换文件"><a href="#（2）-替换文件" class="headerlink" title="（2） 替换文件"></a>（2） 替换文件</h3><p>用刚刚编译出来的带ASAN的二进制文件替换解压出来的二进制文件，路径为<br><code>./extract/usr/bin/</code>  </p>
+<h3 id="3-重新打包"><a href="#3-重新打包" class="headerlink" title="(3) 重新打包"></a>(3) 重新打包</h3><p>使用以下指令进行打包操作<br><code>dpkg-deb -b extract/ build/</code>  </p>
+<h2 id="3-运行"><a href="#3-运行" class="headerlink" title="3.运行"></a>3.运行</h2><h3 id="（1）-终端运行"><a href="#（1）-终端运行" class="headerlink" title="（1） 终端运行"></a>（1） 终端运行</h3><p>卸载旧版本程序，重新安装新版本，在终端中直接运行，模拟用户操作，在终端中输出日志，直接分析。  </p>
+<h3 id="（2）-保存日志文件"><a href="#（2）-保存日志文件" class="headerlink" title="（2） 保存日志文件"></a>（2） 保存日志文件</h3><p>使用以下指令，可以把程序的日志输出到文件中，便于查看。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">程序名 2&gt;&amp;1  | tee 文件名</span><br></pre></td></tr></table></figure>
+
+<h1 id="三、ASAN漏洞分析"><a href="#三、ASAN漏洞分析" class="headerlink" title="三、ASAN漏洞分析"></a>三、ASAN漏洞分析</h1><p>漏洞分析可参看<a target="_blank" rel="noopener" href="https://github.com/google/sanitizers/wiki/AddressSanitizer">官方文档</a>。</p>
+<h1 id="四、参考资料"><a href="#四、参考资料" class="headerlink" title="四、参考资料"></a>四、参考资料</h1><p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/3a2df9b7c353">Address Sanitizer 用法</a><br><a target="_blank" rel="noopener" href="https://bbs.huaweicloud.com/blogs/100056">Address Sanitizer（Asan）原理及实战定位</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">编译</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">工具</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/09/08/Use-of-ASAN/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-sane驱动开发" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/05/17/sane%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/">sane驱动开发</a>
+    </h1>
+  
+
+        
+        <a href="/2021/05/17/sane%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/" class="archive-article-date">
+  	<time datetime="2021-05-17T09:57:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-05-17</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="sane驱动开发"><a href="#sane驱动开发" class="headerlink" title="sane驱动开发"></a>sane驱动开发</h1><h2 id="一、前言"><a href="#一、前言" class="headerlink" title="一、前言"></a>一、前言</h2><p>&emsp;&emsp;Linux下的扫描仪驱动类型主要是sane协议,其他的还有跨平台的twain协议，但是在Linux上比较少见。</p>
+<p>&emsp;&emsp;SANE全称Scanner Access Now Easy，是一个开源项目，项目地址<a target="_blank" rel="noopener" href="http://www.sane-project.org/source.html">http://www.sane-project.org/source.html</a>。项目总体分为两个部分，sane-backends和sane-frontends。sane-backends包括backends(后端，也就是sane的驱动模块)，命令行工具scanimage，网络扫描守护进程（saned）和SANE_API。sane-frontends包含xscanimage和xcam两个图形化界面程序，和一个命令行扫描工具scanadf。分为两部分之后，开发者可以只需要关心需要实现的部分。比如驱动开发者只需要了解如何实现一个后端（backends）即可，而应用开发者只需要关注sane的API调用流程。下面重点介绍驱动开发部分，关于这些扫描工具可以查看帮助手册了解用法。</p>
+<h2 id="二、驱动框架流程详解"><a href="#二、驱动框架流程详解" class="headerlink" title="二、驱动框架流程详解"></a>二、驱动框架流程详解</h2><h3 id="2-1、整体流程"><a href="#2-1、整体流程" class="headerlink" title="2.1、整体流程"></a>2.1、整体流程</h3><p>&emsp;&emsp;想要开发sane的后端，首先要了解应用调用后端API的流程，整体流程图如下：</p>
+<p><img src="/img/process.png" alt="sane流程图"></p>
+<p>&emsp;&emsp;上述流程只是一般通用性扫描流程，不同扫描软件的实现可能会存在细微差异。</p>
+<h3 id="2-2、流程详解"><a href="#2-2、流程详解" class="headerlink" title="2.2、流程详解"></a>2.2、流程详解</h3><h4 id="2-2-1、sane-init"><a href="#2-2-1、sane-init" class="headerlink" title="2.2.1、sane_init"></a>2.2.1、sane_init</h4><p>&emsp;&emsp;原型如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SANE_Status</span><br><span class="line">sane_init(SANE_Int *version_code, SANE_Auth_Callback authorize)</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;这是驱动的入口，主要作用在于初始化设备。一般每个厂商的驱动会配置一个配置文件放在/etc/sane.d目录。对于usb设备，里面会记录设备的挂载路径、VID（厂商ID）和PID（产品ID）。sane_init时就会读取这个配置文件做一些检查。认证这个可以根据需要定制这个回调函数，一般sane的驱动没有实现这个。</p>
+<blockquote>
+<p>sane的API返回值全部都是SANE_Status，所以在驱动开发时要注意每个细分的步骤都要返回对应的状态，这样扫描软件才能根据状态做出正确的判断。</p>
+</blockquote>
+<h4 id="2-2-2、sane-open"><a href="#2-2-2、sane-open" class="headerlink" title="2.2.2、sane_open"></a>2.2.2、sane_open</h4><p>&emsp;&emsp;原型如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SANE_Status</span><br><span class="line">sane_open (SANE_String_Const name, SANE_Handle * h)</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;此接口用于通过参数name建立与对应设备句柄的连接。遍历设备列表，根据name找到指定设备，并将此设备转换成句柄h。</p>
+<h4 id="2-2-3、sane-get-devices"><a href="#2-2-3、sane-get-devices" class="headerlink" title="2.2.3、sane_get_devices"></a>2.2.3、sane_get_devices</h4><p>&emsp;&emsp;原型如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SANE_Status</span><br><span class="line">sane_get_devices (<span class="keyword">const</span> SANE_Device * **device_list, SANE_Bool local_only)</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;应用调用这个接口获取这个驱动对应的设备列表，local_only参数表示仅获取本地设备，但是如果你的驱动没有提供远程设备，就可以忽略这个参数。设备的数量和设备对应的属性也是在sane_init阶段就可以确定。这里只用返回数据即可。</p>
+<h4 id="2-2-4、sane-get-option-descriptor"><a href="#2-2-4、sane-get-option-descriptor" class="headerlink" title="2.2.4、sane_get_option_descriptor"></a>2.2.4、sane_get_option_descriptor</h4><p>&emsp;&emsp;原型如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> SANE_Option_Descriptor *</span><br><span class="line">sane_get_option_descriptor (SANE_Handle handle, SANE_Int option)</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;应用通过handle告诉驱动对应的设备，然后option是对应的属性列表的下标，一般驱动会在设备结构体里面维护一个属性数组，记录设备的各种支持的属性，比如色彩模式、进纸模式和分辨率等。驱动会在这里返回对应设备的指定属性给扫描软件。扫描软件的获取逻辑是循环调用这个接口直到驱动返回NULL，表示属性全部返回。</p>
+<h4 id="2-2-5、sane-control-option"><a href="#2-2-5、sane-control-option" class="headerlink" title="2.2.5、sane_control_option"></a>2.2.5、sane_control_option</h4><p>&emsp;&emsp;原型如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">SANE_Status</span><br><span class="line">sane_control_option (SANE_Handle handle,</span><br><span class="line">                     SANE_Int option,</span><br><span class="line">                     SANE_Action action, <span class="keyword">void</span> *value, SANE_Int * info)</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;这里是扫描软件获取属性默认值和设置属性值的入口。在前一个阶段软件已经获取到了支持的属性列表，这里就会获取默认值用于显示初始选项，用户后面更改属性的选项时也是通过这个入口。区分是设置还是获取属性就要通过action，action定义如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">enum</span></span></span><br><span class="line"><span class="class">  &#123;</span></span><br><span class="line">    SANE_ACTION_GET_VALUE = <span class="number">0</span>,</span><br><span class="line">    SANE_ACTION_SET_VALUE,</span><br><span class="line">    SANE_ACTION_SET_AUTO</span><br><span class="line">  &#125;</span><br><span class="line">SANE_Action;</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;从枚举值的命名方式就能很明显的知道每个action对应的意义。驱动在这里需要根据不同的action进入不同的逻辑。</p>
+<h4 id="2-2-6、sane-start"><a href="#2-2-6、sane-start" class="headerlink" title="2.2.6、sane_start"></a>2.2.6、sane_start</h4><p>&emsp;&emsp;原型如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SANE_Status</span><br><span class="line">sane_start (SANE_Handle handle)</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;这里是启动扫描的入口，根据handle映射到对应设备，然后根据前面设置的各种属性去从设备里面获取图像，缓存到内存中，并解析图片的信息。</p>
+<h4 id="2-2-7、sane-get-parameters"><a href="#2-2-7、sane-get-parameters" class="headerlink" title="2.2.7、sane_get_parameters"></a>2.2.7、sane_get_parameters</h4><p>&emsp;&emsp;原型如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SANE_Status</span><br><span class="line">sane_get_parameters (SANE_Handle handle, SANE_Parameters * params)</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;应用从这个接口获取上次sane_start阶段从设备那里获取的图片缓存的详细信息，params参数的定义如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span></span></span><br><span class="line"><span class="class">  &#123;</span></span><br><span class="line">    SANE_Frame format;</span><br><span class="line">    SANE_Bool last_frame;</span><br><span class="line">    SANE_Int bytes_per_line;</span><br><span class="line">    SANE_Int pixels_per_line;</span><br><span class="line">    SANE_Int lines;</span><br><span class="line">    SANE_Int depth;</span><br><span class="line">  &#125;</span><br><span class="line">SANE_Parameters;</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;params参数值取决于扫描时用户选择的参数，比如分辨率，色彩模式等。应用就是通过这些参数知道图片详细数据，然后对图片做对应的处理。</p>
+<h4 id="2-2-8、sane-read"><a href="#2-2-8、sane-read" class="headerlink" title="2.2.8、sane_read"></a>2.2.8、sane_read</h4><p>&emsp;&emsp;原型如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SANE_Status</span><br><span class="line">sane_read (SANE_Handle handle, SANE_Byte * buf, SANE_Int max_len,</span><br><span class="line">       SANE_Int * len)</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;当应用在上一个步骤获取到图片的信息之后，就会开始调用这个API读取缓存的图片数据，驱动需要在没有超出max_len的上限内存大小的情况下不断循环从上次偏移值的地方继续给buf缓存区写入数据。当数据全部发送完成之后，给应用返回SANE_STATUS_EOF的结束标志，应用就会结束本次扫描，这就完成一次基本的扫描流程。</p>
+<p>&emsp;&emsp;当然不同类型的扫描仪循环结束条件不同，一般ADF(Automatic Document Feeder)自动进纸类型，会一直重复sane_start-&gt;sane_get_parameters-&gt;sane_read这个流程，直到纸张全部扫描完成，最终在sane_start的给应用返回SANE_STATUS_NO_DOCS，这样应用就会停止循环。FLATBED平板进纸类型则是一次扫描只会扫描一张纸。</p>
+<h4 id="2-2-9、sane-cancle"><a href="#2-2-9、sane-cancle" class="headerlink" title="2.2.9、sane_cancle"></a>2.2.9、sane_cancle</h4><p>&emsp;&emsp;原型如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span></span><br><span class="line">sane_cancel(SANE_Handle handle)</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;设置取消标志位为SANE_TRUE，在扫描的时候可以根据这个标志位做停止扫描和释放资源等操作。</p>
+<h4 id="2-2-10、sane-close"><a href="#2-2-10、sane-close" class="headerlink" title="2.2.10、sane_close"></a>2.2.10、sane_close</h4><p>&emsp;&emsp;原型如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span></span><br><span class="line">sane_close(SANE_Handle handle)</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;关闭扫描仪设备的文件描述符，针对不同的类型（SCSI或USB等）扫描仪可以调用不同的方法。关闭之后释放结构体资源即可。</p>
+<h4 id="2-2-11、sane-exit"><a href="#2-2-11、sane-exit" class="headerlink" title="2.2.11、sane_exit"></a>2.2.11、sane_exit</h4><p>&emsp;&emsp;原型如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span></span><br><span class="line">sane_exit (<span class="keyword">void</span>)</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;&emsp;释放所有资源避免内存泄露等问题。</p>
+<h2 id="三、开发细则"><a href="#三、开发细则" class="headerlink" title="三、开发细则"></a>三、开发细则</h2><h3 id="3-1-sane-d文件夹"><a href="#3-1-sane-d文件夹" class="headerlink" title="3.1 sane.d文件夹"></a>3.1 sane.d文件夹</h3><p>&emsp;&emsp;在/etc目录下有个sane.d文件夹，这是默认的用于存放SANE配置文件的位置，也可以通过SANE_CONFIG_DIR来设置一个指定的目录。<br>&emsp;&emsp;/etc/sane.d/dll.conf是用来指定SANE动态加载后端的配置文件，可以手动在某一行前面加#来屏蔽不希望被加载的后端。<br>&emsp;&emsp;第三方的后端文件也可以放在/etc/sane.d/dll.d/目录下，文件以后端名称命名。后端文件中写入我们自己实现的后端的名称，这样SANE就能动态加载到我们实现的后端了。  </p>
+<h3 id="3-2-sane头文件"><a href="#3-2-sane头文件" class="headerlink" title="3.2 sane头文件"></a>3.2 sane头文件</h3><p>&emsp;&emsp;在进行开发时，虽然安装了libsane-dev，但是其中只有sane.h和saneopts.h这两个头文件，如果需要其他的头文件，需要手动将sane的一些头文件拷到项目中。  </p>
+<h3 id="3-3-扫描参数构造"><a href="#3-3-扫描参数构造" class="headerlink" title="3.3 扫描参数构造"></a>3.3 扫描参数构造</h3><p>&emsp;&emsp;扫描参数描述存在于后端的一个结构体中，这个结构体的定义如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span></span></span><br><span class="line"><span class="class">  &#123;</span></span><br><span class="line">    SANE_String_Const name;</span><br><span class="line">    SANE_String_Const title;</span><br><span class="line">    SANE_String_Const desc;</span><br><span class="line">    SANE_Value_Type type;</span><br><span class="line">    SANE_Unit unit;</span><br><span class="line">    SANE_Int size;</span><br><span class="line">    SANE_Int cap;</span><br><span class="line"></span><br><span class="line">    SANE_Constraint_Type constraint_type;</span><br><span class="line">    <span class="class"><span class="keyword">union</span></span></span><br><span class="line"><span class="class">      &#123;</span></span><br><span class="line">    <span class="keyword">const</span> SANE_String_Const *string_list;</span><br><span class="line">    <span class="keyword">const</span> SANE_Word *word_list;</span><br><span class="line">    <span class="keyword">const</span> SANE_Range *range;</span><br><span class="line">      &#125;</span><br><span class="line">    constraint;</span><br><span class="line">  &#125;</span><br><span class="line">SANE_Option_Descriptor;</span><br></pre></td></tr></table></figure>
+
+
+<p>&emsp;&emsp;下面的例子是已经实现的一个关于分辨率列表的属性结构体。通过此例子对此结构体的各项成员变量做一些说明。  </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">const</span> SANE_Word s_RemoteScannerResolutionList[] = &#123;</span><br><span class="line">    <span class="number">6</span>, <span class="number">75</span>, <span class="number">150</span>, <span class="number">300</span>, <span class="number">600</span>, <span class="number">1200</span>, <span class="number">2400</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">SANE_Option_Descriptor &#123;</span><br><span class="line">    SANE_NAME_SCAN_RESOLUTION,</span><br><span class="line">    SANE_TITLE_SCAN_RESOLUTION,</span><br><span class="line">    SANE_DESC_SCAN_RESOLUTION,</span><br><span class="line">    SANE_TYPE_INT,</span><br><span class="line">    SANE_UNIT_DPI,</span><br><span class="line">    <span class="keyword">sizeof</span>(SANE_Word),</span><br><span class="line">    SANE_CAP_SOFT_SELECT | SANE_CAP_SOFT_DETECT | SANE_CAP_AUTOMATIC,</span><br><span class="line">    SANE_CONSTRAINT_WORD_LIST,</span><br><span class="line">    &#123;</span><br><span class="line">        (SANE_String_Const *)s_RemoteScannerResolutionList</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-3-1-name、title、desc"><a href="#3-3-1-name、title、desc" class="headerlink" title="3.3.1 name、title、desc"></a>3.3.1 name、title、desc</h4><p>&emsp;&emsp;这三个成员变量是对当前扫描参数的描述，只需要注意如果使用自定义的描述，title和desc要使用SANE_I18N()将描述字符串包起来即可。</p>
+<h4 id="3-3-2-type"><a href="#3-3-2-type" class="headerlink" title="3.3.2 type"></a>3.3.2 type</h4><p>&emsp;&emsp;type指定参数值的类型，共有以下几种类型。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">enum</span></span></span><br><span class="line"><span class="class">  &#123;</span></span><br><span class="line">    SANE_TYPE_BOOL = <span class="number">0</span>,</span><br><span class="line">    SANE_TYPE_INT,</span><br><span class="line">    SANE_TYPE_FIXED,</span><br><span class="line">    SANE_TYPE_STRING,</span><br><span class="line">    SANE_TYPE_BUTTON,</span><br><span class="line">    SANE_TYPE_GROUP</span><br><span class="line">  &#125;</span><br><span class="line">SANE_Value_Type;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;例子中使用的是SANE_TYPE_INT，表示参数值是int型的数据。</p>
+<h4 id="3-3-3-unit"><a href="#3-3-3-unit" class="headerlink" title="3.3.3 unit"></a>3.3.3 unit</h4><p>&emsp;&emsp;unit指定参数值的单位，共有以下几种类型。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">enum</span></span></span><br><span class="line"><span class="class">  &#123;</span></span><br><span class="line">    SANE_UNIT_NONE = <span class="number">0</span>,</span><br><span class="line">    SANE_UNIT_PIXEL,</span><br><span class="line">    SANE_UNIT_BIT,		</span><br><span class="line">    SANE_UNIT_MM,		</span><br><span class="line">    SANE_UNIT_DPI,</span><br><span class="line">    SANE_UNIT_PERCENT,</span><br><span class="line">    SANE_UNIT_MICROSECOND</span><br><span class="line">  &#125;</span><br><span class="line">SANE_Unit;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;例子中使用的是SANE_UNIT_DPI，表示参数值的单位是dots/inch，对应分辨率的单位。如果是色彩模式等无单位的属性值，则应选择SANE_UNIT_NONE。根据属性选择对应的单位即可。</p>
+<h4 id="3-3-4-size"><a href="#3-3-4-size" class="headerlink" title="3.3.4 size"></a>3.3.4 size</h4><p>&emsp;&emsp;size表示属性值的长度，需要注意的是，如果size设定的较短，属性值会被截断，导致扫描属性值在传输的时候出现异常。例子中选择的是分辨率，数据不会太大，size设置成8就够了；如果是string型的数据，则需要至少将size设置成列表中最长字符串的长度。</p>
+<h4 id="3-3-5-cap"><a href="#3-3-5-cap" class="headerlink" title="3.3.5 cap"></a>3.3.5 cap</h4><p>&emsp;&emsp;cap表示此属性支持的属性，共有以下几种类型。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">SANE_CAP_SOFT_SELECT   </span><br><span class="line">SANE_CAP_HARD_SELECT    </span><br><span class="line">SANE_CAP_SOFT_DETECT    </span><br><span class="line">SANE_CAP_EMULATED		</span><br><span class="line">SANE_CAP_AUTOMATIC    </span><br><span class="line">SANE_CAP_INACTIVE		</span><br><span class="line">SANE_CAP_ADVANCED		  </span><br></pre></td></tr></table></figure>
+<ul>
+<li>SANE_CAP_SOFT_SELECT<br>表示此属性可以通过sane_control_option()设置。</li>
+<li>SANE_CAP_HARD_SELECT<br>表示此属性可以通过硬件（例如拨动开关）设置。  </li>
+<li>SANE_CAP_SOFT_DETECT<br>表示此属性可以被软件探测到。  </li>
+<li>SANE_CAP_EMULATED<br>如果设置了此功能，则表示该设备不直接支持该选项，而是在后端中对其进行仿真。  </li>
+<li>SANE_CAP_AUTOMATIC<br>如果设置了此功能，则表示后端（或设备）能够自动选择合理的选项值。  </li>
+<li>SANE_CAP_INACTIVE<br>如果设置了此功能，则表示该选项当前未激活（例如，仅当另一个选项设置为其他值时，该选项才有意义）。  </li>
+<li>SANE_CAP_ADVANCED<br>如果设置了此功能，则表明该选项应被视为“高级用户选项”。前端通常以比常规选项不那么显眼的方式显示此类选项。  </li>
+</ul>
+<p>&emsp;&emsp;例子中的分辨率列表希望实现的效果是能通过软件设置以及能自动选择正确的选项值，因此将cap设置成SANE_CAP_SOFT_SELECT | SANE_CAP_SOFT_DETECT | SANE_CAP_AUTOMATIC。其他属性根据实际需要进行类似的设置即可。  </p>
+<h4 id="3-3-6-constraint-type"><a href="#3-3-6-constraint-type" class="headerlink" title="3.3.6 constraint_type"></a>3.3.6 constraint_type</h4><p>&emsp;&emsp;constraint_type指定属性描述列表的类型，共有以下几种类型。  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">typedef enum</span><br><span class="line">  &#123;</span><br><span class="line">    SANE_CONSTRAINT_NONE &#x3D; 0,</span><br><span class="line">    SANE_CONSTRAINT_RANGE,</span><br><span class="line">    SANE_CONSTRAINT_WORD_LIST,</span><br><span class="line">    SANE_CONSTRAINT_STRING_LIST</span><br><span class="line">  &#125;</span><br><span class="line">SANE_Constraint_Type;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;例子中的分辨率列表是一个int型的数组，因此将constraint_type设置成SANE_CONSTRAINT_WORD_LIST。如果是色彩模式这种string型数组，则应该将constraint_type设置成SANE_CONSTRAINT_STRING_LIST。</p>
+<h4 id="3-3-7-constraint"><a href="#3-3-7-constraint" class="headerlink" title="3.3.7 constraint"></a>3.3.7 constraint</h4><p>&emsp;&emsp;constraint是属性描述的列表，即属性列表的数据。列表有三种类型，分别是int型列表、string型列表和范围型列表。</p>
+<ul>
+<li><p>int型列表<br>int型列表可以用来描述分辨率等属性，赋值方式如下所示。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">static const SANE_Word resolutionList[] &#x3D; &#123;</span><br><span class="line">    8, 75, 150, 200, 240， 300, 400, 500, 600</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;resolutionList[0]表示列表中选项值的个数，显示效果如下图。<br><img src="/img/intlist.bmp" alt="int型列表显示效果图"></p>
+</li>
+<li><p>string型列表<br>string型列表可以用来描述色彩模式、纸张尺寸、进纸方式等属性，赋值方式如下所示。  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">SANE_String_Const pageSizeList[] &#x3D; &#123;</span><br><span class="line">    &quot;A3&quot;，</span><br><span class="line">    &quot;A4&quot;，</span><br><span class="line">    &quot;B4&quot;，</span><br><span class="line">    &quot;A5&quot;,</span><br><span class="line">    &quot;B5&quot;,</span><br><span class="line">    &quot;A6&quot;,</span><br><span class="line">    &quot;B6&quot;,</span><br><span class="line">    nullptr</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;pageSizeList列表中最后一项必须是nullptr，表示列表选项值结束，否则会发生异常。显示效果如下图。<br><img src="/img/stringlist.bmp" alt="string型列表显示效果图"></p>
+</li>
+<li><p>range型列表<br>range型列表可以用来描述对比度、亮度等属性，赋值方式如下所示。  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SANE_Range resolutionRange &#x3D; &#123;</span><br><span class="line">    50,</span><br><span class="line">    300,</span><br><span class="line">    0</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>&emsp;&emsp;resolutionRange第一项表示范围下限，第二项表示范围上限，第三项表示步进（0表示步进为1）。显示效果如下图。<br><img src="/img/rangelist.bmp" alt="range型列表显示效果图"></p>
+</li>
+</ul>
+<h3 id="3-4-设备交互"><a href="#3-4-设备交互" class="headerlink" title="3.4 设备交互"></a>3.4 设备交互</h3><h4 id="3-4-1-与USB扫描仪的交互"><a href="#3-4-1-与USB扫描仪的交互" class="headerlink" title="3.4.1 与USB扫描仪的交互"></a>3.4.1 与USB扫描仪的交互</h4><h5 id="3-4-1-1-sane-init中的接口"><a href="#3-4-1-1-sane-init中的接口" class="headerlink" title="3.4.1.1 sane_init中的接口"></a>3.4.1.1 sane_init中的接口</h5><ul>
+<li>sanei_usb_init()<br>&emsp;&emsp;首先调用此接口，获取所有可用的usb设备。  </li>
+<li>sanei_config_open(const char *filename)<br>&emsp;&emsp;加载指定设备对应的配置文件配置文件。  </li>
+<li>sanei_config_read(char *str, int n, FILE *stream)<br>&emsp;&emsp;读取配置文件，获取设备的VID（厂商ID）和PID（产品ID）,跳过配置文件中的空行和以“#”开头的行。  </li>
+<li>sanei_usb_attach_matching_devices (const char *name,SANE_Status (*attach) (const char *dev))<br>&emsp;&emsp;将扫描仪的VID、PID、设备名绑定，以便后面直接使用设备名能够访问指定设备。</li>
+</ul>
+<h5 id="3-4-1-2-sane-open中的接口"><a href="#3-4-1-2-sane-open中的接口" class="headerlink" title="3.4.1.2 sane_open中的接口"></a>3.4.1.2 sane_open中的接口</h5><ul>
+<li>sanei_usb_open (SANE_String_Const devname, SANE_Int * dn)<br>&emsp;&emsp;根据sane_open传过来的设备名，传入此接口，打开指定设备，dn指向的是设备列表中该设备的下标。</li>
+</ul>
+<h5 id="3-4-1-3-sane-start中的接口"><a href="#3-4-1-3-sane-start中的接口" class="headerlink" title="3.4.1.3 sane_start中的接口"></a>3.4.1.3 sane_start中的接口</h5><ul>
+<li>sanei_usb_write_bulk (SANE_Int dn, const SANE_Byte * buffer, size_t * size)<br>&emsp;&emsp;在sane_start中重复调用这个接口，为指定的USB设备设置期望使用的扫描参数，size返回真实写入的长度。设置完所有参数后，再次调用这个接口，将buffer设置成对应的扫描指令，即可控制扫描仪开始扫描工作。</li>
+</ul>
+<h5 id="3-4-1-4-sane-close中的接口"><a href="#3-4-1-4-sane-close中的接口" class="headerlink" title="3.4.1.4 sane_close中的接口"></a>3.4.1.4 sane_close中的接口</h5><ul>
+<li>sanei_usb_close (SANE_Int dn)<br>&emsp;&emsp;传入的参数是设备列表中该设备的下标，根据此下标关闭指定的usb设备。</li>
+</ul>
+<h4 id="3-4-2-与SCSI扫描仪的交互"><a href="#3-4-2-与SCSI扫描仪的交互" class="headerlink" title="3.4.2 与SCSI扫描仪的交互"></a>3.4.2 与SCSI扫描仪的交互</h4><h5 id="3-4-2-1-sane-init中的接口"><a href="#3-4-2-1-sane-init中的接口" class="headerlink" title="3.4.2.1 sane_init中的接口"></a>3.4.2.1 sane_init中的接口</h5><ul>
+<li>sanei_config_open(const char *filename)<br>&emsp;&emsp;加载指定设备对应的配置文件配置文件。  </li>
+<li>sanei_config_read(char *str, int n, FILE *stream)<br>&emsp;&emsp;读取配置文件，获取设备的VID（厂商ID）和PID（产品ID）,跳过配置文件中的空行和以“#”开头的行。  </li>
+<li>sanei_usb_attach_matching_devices (const char *name,SANE_Status (*attach) (const char *dev))<br>&emsp;&emsp;将扫描仪的VID、PID、设备名绑定，以便后面直接使用设备名能够访问指定设备。</li>
+</ul>
+<h5 id="3-4-2-2-sane-open中的接口"><a href="#3-4-2-2-sane-open中的接口" class="headerlink" title="3.4.2.2 sane_open中的接口"></a>3.4.2.2 sane_open中的接口</h5><ul>
+<li>sanei_scsi_open (const char *dev, int *fdp, SANEI_SCSI_Sense_Handler handler, void *handler_arg)<br>&emsp;&emsp;根据sane_open传过来的设备名，打开一个指定的SCSI设备，并且返回设备的文件描述符。</li>
+</ul>
+<h5 id="3-4-2-3-sane-start中的接口"><a href="#3-4-2-3-sane-start中的接口" class="headerlink" title="3.4.2.3 sane_start中的接口"></a>3.4.2.3 sane_start中的接口</h5><ul>
+<li>sanei_scsi_cmd2 (int fd, const void *cmd, size_t cmd_size, const void *src, size_t src_size, void *dst, size_t * dst_size)<br>&emsp;&emsp;在sane_start中重复调用这个接口，为指定的SCSI设备设置期望使用的扫描参数。这个接口比较便捷，相当于同时调用了sanei_scsi_req_enter2()和sanei_scsi_req_wait()这两个接口。设置完所有参数后，再次调用这个接口，将cmd设置成对应的扫描指令，即可控制扫描仪开始扫描工作。</li>
+</ul>
+<h5 id="3-4-2-4-sane-close中的接口"><a href="#3-4-2-4-sane-close中的接口" class="headerlink" title="3.4.2.4 sane_close中的接口"></a>3.4.2.4 sane_close中的接口</h5><ul>
+<li>sanei_usb_close (SANE_Int dn)<br>&emsp;&emsp;传入的参数是设备列表中该设备的下标，根据此下标关闭指定的SCSI设备。</li>
+</ul>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Linux</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Driver</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/05/17/sane%E9%A9%B1%E5%8A%A8%E5%BC%80%E5%8F%91/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-SANE-WIA-note" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1187,180 +1519,6 @@ ps:center left right
 
 
   
-    <article id="post-chorme浏览器插件" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/01/28/chorme%E6%B5%8F%E8%A7%88%E5%99%A8%E6%8F%92%E4%BB%B6/">chorme浏览器插件</a>
-    </h1>
-  
-
-        
-        <a href="/2021/01/28/chorme%E6%B5%8F%E8%A7%88%E5%99%A8%E6%8F%92%E4%BB%B6/" class="archive-article-date">
-  	<time datetime="2021-01-28T05:12:14.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-01-28</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>本文主要用于记录自己在使用chorme浏览器时使用的一些比较好用的浏览器插件</p>
-<h2 id="一、chorem应用商店自带插件"><a href="#一、chorem应用商店自带插件" class="headerlink" title="一、chorem应用商店自带插件"></a>一、chorem应用商店自带插件</h2><h3 id="1-AdGuard"><a href="#1-AdGuard" class="headerlink" title="1.AdGuard"></a>1.AdGuard</h3><p>AdGuard是一款用于拦截网页广告的插件</p>
-<h3 id="2-Lastpass"><a href="#2-Lastpass" class="headerlink" title="2.Lastpass"></a>2.Lastpass</h3><p>Lastpass是一款用于记录账号密码和自动生成密码的插件，可以在安卓端同步，目前没发现在ipad上使用的方法。</p>
-<h3 id="3-crxMouse"><a href="#3-crxMouse" class="headerlink" title="3.crxMouse"></a>3.crxMouse</h3><p>crxMouse是一款在网页上使用鼠标手势的插件，我一般用的多的手势是上移到顶端或者下移到底端，操作简单。</p>
-<h3 id="4-Vimium"><a href="#4-Vimium" class="headerlink" title="4.Vimium"></a>4.Vimium</h3><p>Vimium是一款将vim操作用在浏览器上的插件，可以基本实现浏览网页无鼠标操作，使用规则和vim类似，自带操作指令说明，上手简单，只是偶尔会和浏览器的默认快捷键发生冲突，问题不大。</p>
-<h3 id="5-JsonViewer"><a href="#5-JsonViewer" class="headerlink" title="5.JsonViewer"></a>5.JsonViewer</h3><p>JsonViewer可将网页json数据转换成便于阅读的格式。</p>
-<h3 id="6-grammarly"><a href="#6-grammarly" class="headerlink" title="6.grammarly"></a>6.grammarly</h3><p>一个利用大数据人工智能纠正英文写作的语法网站：<a target="_blank" rel="noopener" href="https://www.grammarly.com/">https://www.grammarly.com/</a> 给上游提交补丁的时候可以试试。</p>
-<h3 id="7-沙拉查词"><a href="#7-沙拉查词" class="headerlink" title="7.沙拉查词"></a>7.沙拉查词</h3><p>一个划词翻译的插件，遇到不认识的单词可以使用这个插件看单词意思，可以绑定一些背单词的app，学习起来还是挺方便的。</p>
-<h3 id="8-哔哩哔哩助手"><a href="#8-哔哩哔哩助手" class="headerlink" title="8.哔哩哔哩助手"></a>8.哔哩哔哩助手</h3><p>这个就不多说了，逛B站必备的一个插件。</p>
-<h3 id="9-B站下载助手"><a href="#9-B站下载助手" class="headerlink" title="9.B站下载助手"></a>9.B站下载助手</h3><p>这个插件用来下载B站上的视频，功能比较强大。下载视频除了用这个插件，还可以用哔哩哔哩唧唧，也挺好用的。</p>
-<h3 id="10-pakku"><a href="#10-pakku" class="headerlink" title="10.pakku"></a>10.pakku</h3><p>B站上用来屏蔽重复弹幕的插件，用了这个插件，看b站上的视频再也不用担心海量弹幕挡住观看区域了。</p>
-<h3 id="11-similar-site"><a href="#11-similar-site" class="headerlink" title="11.similar site"></a>11.similar site</h3><p>一个用来查看与当前网页类似网页的插件。看到一个喜欢的网站，内容不够看的时候，使用这个插件能够轻松找到更多相关网站。</p>
-<h3 id="12-Automatic-4K-HD-for-Youtube"><a href="#12-Automatic-4K-HD-for-Youtube" class="headerlink" title="12.Automatic 4K/HD for Youtube"></a>12.Automatic 4K/HD for Youtube</h3><p>设置youtube默认视频分辨率的一个插件，不用每次看视频都重新设置一次清晰度。</p>
-<h3 id="13-chrono下载管理器"><a href="#13-chrono下载管理器" class="headerlink" title="13.chrono下载管理器"></a>13.chrono下载管理器</h3><p>正如插件的描述信息那样，做Chrome浏览器中最好的下载管理器。</p>
-<h3 id="14-Convertio"><a href="#14-Convertio" class="headerlink" title="14.Convertio"></a>14.Convertio</h3><p>一个在线转换文件格式的插件，支持的转换格式有很多种，有了这个插件就不用到处去找工具转换文件了。</p>
-<h3 id="15-CTG-Plugins"><a href="#15-CTG-Plugins" class="headerlink" title="15.CTG Plugins"></a>15.CTG Plugins</h3><p>一个鼠标自动化的插件，能实现定时自动点击以及滚动等效果，我一般用些基本功能，足够了。</p>
-<h3 id="16-image-search-options-imagus-pinterest-二箱-图片助手-imageAssistant"><a href="#16-image-search-options-imagus-pinterest-二箱-图片助手-imageAssistant" class="headerlink" title="16.image search options/imagus/pinterest/二箱/图片助手(imageAssistant)"></a>16.image search options/imagus/pinterest/二箱/图片助手(imageAssistant)</h3><p>这几个插件都是用来搜图查图下图的，功能大致相同，有这些插件，基本上所有图片都能找到来源了。</p>
-<h3 id="17-右键搜-search-all"><a href="#17-右键搜-search-all" class="headerlink" title="17.右键搜/search all"></a>17.右键搜/search all</h3><p>一个用来拓展右键菜单的插件，功能很多。</p>
-<h3 id="18-Powerful-Pixiv-downloader"><a href="#18-Powerful-Pixiv-downloader" class="headerlink" title="18.Powerful Pixiv downloader"></a>18.Powerful Pixiv downloader</h3><p>一个用于在pixiv快乐畅游的插件，功能很强大。</p>
-<h3 id="19-OneTab"><a href="#19-OneTab" class="headerlink" title="19.OneTab"></a>19.OneTab</h3><p>一个用于减轻标签页混乱现象的插件，可以节省内存。</p>
-<h3 id="20-infinity"><a href="#20-infinity" class="headerlink" title="20.infinity"></a>20.infinity</h3><p>一个用于自定义新标签页的插件，有了这个插件，就不用每次打开Chrome都是烦人的页面了。</p>
-<h2 id="二、Tampermonkey-油猴"><a href="#二、Tampermonkey-油猴" class="headerlink" title="二、Tampermonkey 油猴"></a>二、Tampermonkey 油猴</h2><h3 id="1-searchEngineJump-搜索引擎快捷跳转"><a href="#1-searchEngineJump-搜索引擎快捷跳转" class="headerlink" title="1.searchEngineJump 搜索引擎快捷跳转"></a>1.searchEngineJump 搜索引擎快捷跳转</h3><p>searchEngineJump方便的在各个搜索引擎之间跳转,增加可视化设置菜单,能更友好的自定义设置。</p>
-<h3 id="2-豆瓣资源下载大师：1秒搞定豆瓣电影-音乐-图书下载"><a href="#2-豆瓣资源下载大师：1秒搞定豆瓣电影-音乐-图书下载" class="headerlink" title="2.豆瓣资源下载大师：1秒搞定豆瓣电影|音乐|图书下载"></a>2.豆瓣资源下载大师：1秒搞定豆瓣电影|音乐|图书下载</h3><p>聚合数百家资源网站，通过右侧边栏1秒告诉你哪些网站能下载豆瓣页面上的电影|电视剧|纪录片|综艺|动画|音乐|图书等，有资源的网站显示绿色，没资源的网站显示黄色，就这么直观！所有豆瓣条目均提供在线播放|阅读、字幕|歌词下载及PT|NZB|BT|磁力|百度盘|115网盘等下载链接，加入官网打死也不出的豆列搜索功能，此外还能给豆瓣条目额外添加IMDB评分|IMDB TOP 250|Metascore评分|烂番茄评分|AniDB评分|Bgm评分|MAL|亚马逊评分等更多评分形式。</p>
-<h3 id="3-贴吧全能助手-第三方修改"><a href="#3-贴吧全能助手-第三方修改" class="headerlink" title="3.贴吧全能助手(第三方修改)"></a>3.贴吧全能助手(第三方修改)</h3><p>百度贴吧 tieba.baidu.com 看贴（包括楼中楼）无须登录，完全去除扰眼和各类广告模块(然而挡不住幽灵广告，至于贴吧活动广告不管了，都是针对某个贴吧弄的，来无影去无踪，能证明PC贴吧还有人管。。。)，全面精简并美化各种贴吧页面（算不算要看个人喜好），去除贴吧帖子里链接的跳转（已失效），按发贴时间排序/倒序（翻页后失效），查看贴吧用户发言记录（有些用户查不了），贴子关键字屏蔽（作用不大），移除会员彩名，直接在当前页面查看原图，可缩放，可多开，可拖拽。</p>
-<h3 id="4-其他"><a href="#4-其他" class="headerlink" title="4.其他"></a>4.其他</h3><p>油猴上的插件有点太多了，功能也比较强大，写起来比较麻烦，就直接截图放在我的github仓库里了。</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">工具</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/01/28/chorme%E6%B5%8F%E8%A7%88%E5%99%A8%E6%8F%92%E4%BB%B6/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-vmware使用问题" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/10/26/vmware%E4%BD%BF%E7%94%A8%E9%97%AE%E9%A2%98/">vmware使用问题</a>
-    </h1>
-  
-
-        
-        <a href="/2020/10/26/vmware%E4%BD%BF%E7%94%A8%E9%97%AE%E9%A2%98/" class="archive-article-date">
-  	<time datetime="2020-10-26T09:43:26.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-10-26</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="vmware使用问题"><a href="#vmware使用问题" class="headerlink" title="vmware使用问题"></a>vmware使用问题</h2><h3 id="1-网络问题"><a href="#1-网络问题" class="headerlink" title="1.网络问题"></a>1.网络问题</h3><p>使用vmware虚拟机时，无法连接上网络，提示</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Could not connect &#39;Ethernet0&#39; to virtual network &#39;&#x2F;dev&#x2F;vmnet0&#39;. More information can be found in the vmware.log file.</span><br></pre></td></tr></table></figure>
-<p>原因是虚拟机无法启用物理机上的虚拟网卡。<br>解决方法：终端中使用<br><code>sudo /etc/init.d/vmware restart</code><br>重新启动vmware服务。</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">工具</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/10/26/vmware%E4%BD%BF%E7%94%A8%E9%97%AE%E9%A2%98/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/">&amp;laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/3/">Next &amp;raquo;</a>
@@ -1375,7 +1533,7 @@ ps:center left right
   <div class="outer">
     <div id="footer-info">
     	<div class="footer-left">
-    		&copy; 2022 LK
+    		&copy; 2023 LK
     	</div>
       	<div class="footer-right">
       		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
@@ -1487,6 +1645,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color5">网络通信</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">C++</a>
               </li>
             
             <div class="clearfix"></div>
