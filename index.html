@@ -161,6 +161,118 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-导出gitlab的issues并转换成csv文件" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2023/03/06/%E5%AF%BC%E5%87%BAgitlab%E7%9A%84issues%E5%B9%B6%E8%BD%AC%E6%8D%A2%E6%88%90csv%E6%96%87%E4%BB%B6/">导出gitlab的issues并转换成csv文件</a>
+    </h1>
+  
+
+        
+        <a href="/2023/03/06/%E5%AF%BC%E5%87%BAgitlab%E7%9A%84issues%E5%B9%B6%E8%BD%AC%E6%8D%A2%E6%88%90csv%E6%96%87%E4%BB%B6/" class="archive-article-date">
+  	<time datetime="2023-03-06T07:26:12.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-03-06</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="gitlab获取仓库信息"><a href="#gitlab获取仓库信息" class="headerlink" title="gitlab获取仓库信息"></a>gitlab获取仓库信息</h2><h3 id="获取PRIVATE-TOKEN"><a href="#获取PRIVATE-TOKEN" class="headerlink" title="获取PRIVATE-TOKEN"></a>获取PRIVATE-TOKEN</h3><p>gitlab提供了API接口，可以对gitlab里的数据进行各种操作，具体可见<a target="_blank" rel="noopener" href="https://docs.gitlab.com/ee/api/">gitlab参考文档</a>。</p>
+<p>使用gitlab提供的API接口时，基本都需要使用PRIVATE-TOKEN进行身份认证。</p>
+<p>PRIVATE-TOKEN的获取方式如下：</p>
+<ol>
+<li>进入gitlab的user settings</li>
+<li>进入access token</li>
+<li>在右侧personal access tokens中填入姓名、过期时间，勾选相应权限，点击create</li>
+<li>自行保存生成的PRIVATE-TOKEN，PRIVATE-TOKEN在界面刷新之后，就不能再看到了</li>
+</ol>
+<h3 id="获取group的ID"><a href="#获取group的ID" class="headerlink" title="获取group的ID"></a>获取group的ID</h3><p><code> curl --header &quot;PRIVATE-TOKEN: xxx&quot; &quot;http://gitlab.example.com/api/v4/groups/&quot; &gt; groupid.json</code></p>
+<p>v4表示API的版本</p>
+<p>gitlab返回的数据是一个json字符串，可以将其储存在一个json文件中，以便后续处理</p>
+<h3 id="获取project的ID"><a href="#获取project的ID" class="headerlink" title="获取project的ID"></a>获取project的ID</h3><p>假如上面获取的group的ID为10，则用下面的指令获取project的ID</p>
+<p><code>curl --header &quot;PRIVATE-TOKEN: xxx&quot; &quot;http://gitlab.example.com/api/v4/groups/10/projects&quot; &gt; projectid.json</code></p>
+<h3 id="获取project的issues"><a href="#获取project的issues" class="headerlink" title="获取project的issues"></a>获取project的issues</h3><p>假如上面获取到的project的ID为100，则用下面的指令获取issues</p>
+<p><code>curl --head --header &quot;PRIVATE-TOKEN: &lt;your_access_token&gt;&quot; &quot;https://gitlab.example.com/api/v4/projects/9/issues/8/notes?per_page=30&amp;page=2&quot; &gt; issues.json</code></p>
+<p>gitlab默认服务器每次只返回20条数据，可以通过设置per_page和page的值，指定返回的数据个数</p>
+<p>上述指令表示，设置服务器每页30页数据，获取其中的第二页数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">page: Page number(default:1)</span><br><span class="line">per_page:Number of items to list per page(default:20,max:100)</span><br></pre></td></tr></table></figure>
+
+<h2 id="将Json文件转换成CSV文件"><a href="#将Json文件转换成CSV文件" class="headerlink" title="将Json文件转换成CSV文件"></a>将Json文件转换成CSV文件</h2><p>通过上述操作，即可获取到需要的json数据，接下来就写一个工具，提取其中的数据，转换成csv文件</p>
+<p>工具比较简单，只有两个功能，读取json数据部分，以及写入csv文件部分。</p>
+<p>读取部分如下</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">PraseJson::readJsonFile</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="function">QFile <span class="title">file</span><span class="params">(m_oriFilePath)</span></span>;</span><br><span class="line">    <span class="keyword">if</span> (!file.open(QIODevice::ReadOnly)) &#123;</span><br><span class="line">        qCritical() &lt;&lt; <span class="string">&quot;File open failed&quot;</span>;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function">QByteArray <span class="title">data</span><span class="params">(file.readAll())</span></span>;</span><br><span class="line">    file.close();</span><br><span class="line">    qDebug() &lt;&lt; <span class="string">&quot;File read finished&quot;</span>;</span><br><span class="line"></span><br><span class="line">    QJsonParseError jError;</span><br><span class="line">    QJsonDocument jDoc = QJsonDocument::fromJson(data, &amp;jError);</span><br><span class="line">    <span class="keyword">if</span> (jError.error != QJsonParseError::NoError) &#123;</span><br><span class="line">        qCritical() &lt;&lt; <span class="string">&quot;Error: &quot;</span> &lt;&lt; jError.errorString();</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> QJsonArray jArr = jDoc.<span class="built_in">array</span>();</span><br><span class="line">    <span class="keyword">const</span> QJsonObject jObj = jDoc.object();</span><br><span class="line">    qDebug() &lt;&lt; jArr.size();</span><br><span class="line">    QJsonValue jValue;</span><br><span class="line">    QJsonObject jObj2;</span><br><span class="line">    m_outputLst.clear();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; jArr.size(); i++) &#123;</span><br><span class="line">        m_tmpLst.clear();</span><br><span class="line">        jValue = jArr.at(i);</span><br><span class="line">        jObj2 = jValue.toObject();</span><br><span class="line">        <span class="keyword">auto</span> objAct = jObj2.toVariantMap();</span><br><span class="line">        m_tmpLst.append(objAct[<span class="string">&quot;iid&quot;</span>].toString());</span><br><span class="line">        m_tmpLst.append(objAct[<span class="string">&quot;title&quot;</span>].toString());</span><br><span class="line"><span class="comment">//        m_tmpLst.append(objAct[&quot;description&quot;].toString().simplified());</span></span><br><span class="line">        m_tmpLst.append(objAct[<span class="string">&quot;state&quot;</span>].toString());</span><br><span class="line">        m_outputLst.push_back(m_tmpLst);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>写入CSV文件部分如下</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">PraseJson::writeCsvFile</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    QString fileName = m_oriFilePath.replace(<span class="string">&quot;.json&quot;</span>, <span class="string">&quot;.csv&quot;</span>);</span><br><span class="line">    <span class="function">QFile <span class="title">file</span><span class="params">(fileName)</span></span>;</span><br><span class="line">    <span class="keyword">if</span> (!file.open(QIODevice::WriteOnly)) &#123;</span><br><span class="line">        qCritical() &lt;&lt; <span class="string">&quot;File open failed&quot;</span>;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function">QTextStream <span class="title">stream</span><span class="params">(&amp;file)</span></span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; m_outputLst.size(); i++) &#123;</span><br><span class="line">        stream &lt;&lt; m_outputLst.at(i).join(<span class="string">&quot;,&quot;</span>) &lt;&lt; <span class="string">&quot;\r\n&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    file.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>由于csv文件是通过’,’作为单元格的分隔符，以及通过换行符”\r\n”作为一行的结束，因此，如果数据中包含这些特殊字符时，需要单独进行处理，例如增加转义字符，将’,’改成’\,’等。</p>
+<p>还可以优化的部分</p>
+<ol>
+<li>一次处理多个文件</li>
+<li>将多个文件处理的结果追加到一个csv文件中</li>
+<li>处理含有特殊字符的数据</li>
+</ol>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">工具</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">QT</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2023/03/06/%E5%AF%BC%E5%87%BAgitlab%E7%9A%84issues%E5%B9%B6%E8%BD%AC%E6%8D%A2%E6%88%90csv%E6%96%87%E4%BB%B6/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-八位bool值数组转换成uint8" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -1033,104 +1145,6 @@
 
 
   
-    <article id="post-himawaripy-in-linux" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/10/03/himawaripy-in-linux/">himawaripy in linux</a>
-    </h1>
-  
-
-        
-        <a href="/2021/10/03/himawaripy-in-linux/" class="archive-article-date">
-  	<time datetime="2021-10-03T08:03:37.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-10-03</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>此文主要记录在UOS操作系统上使用himawaripy代码自动获取地球实时图像，并设置成桌面壁纸的操作方式。</p>
-<h1 id="himawaripy项目部署"><a href="#himawaripy项目部署" class="headerlink" title="himawaripy项目部署"></a>himawaripy项目部署</h1><h2 id="一、项目介绍"><a href="#一、项目介绍" class="headerlink" title="一、项目介绍"></a>一、项目介绍</h2><p>Himawaripy 是一个 Python 3 脚本，可获取由<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Himawari_8">Himawari 8 (ひまわり8 号)</a>拍摄的近实时（延迟 10 分钟）地球图片。</p>
-<p>通过Linux系统上的crontab实时脚本（或 systemd 服务）设置每10分钟自动更换壁纸，以自动获取近乎实时的地球图片。</p>
-<h2 id="二、项目安装"><a href="#二、项目安装" class="headerlink" title="二、项目安装"></a>二、项目安装</h2><ul>
-<li><p>在GitHub上找到<a target="_blank" rel="noopener" href="https://github.com/boramalper/himawaripy">himawaripy</a>的项目地址，通过git clone获取项目源码</p>
-</li>
-<li><p>安装python后，通过python安装指令安装himawari</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python setup.py install</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>通过以下指令检查是否安装成功</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">himawaripy --auto-offset</span><br></pre></td></tr></table></figure>
-
-</li>
-</ul>
-<h2 id="三、自动更换壁纸脚本配置"><a href="#三、自动更换壁纸脚本配置" class="headerlink" title="三、自动更换壁纸脚本配置"></a>三、自动更换壁纸脚本配置</h2><h3 id="脚本"><a href="#脚本" class="headerlink" title="脚本"></a>脚本</h3><p>编写一个bash脚本，执行dbus接口，实现更换壁纸的操作。脚本内容如下  </p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="built_in">source</span> /etc/profile</span><br><span class="line">himawaripy</span><br><span class="line">mv /home/liukui/.cache/himawaripy/*.png /home/liukui/.cache/himawaripy/himawari.png</span><br><span class="line">dbus-send --print-reply --dest=com.deepin.daemon.Appearance /com/deepin/daemon/Appearance com.deepin.daemon.Appearance.SetMonitorBackground string:HDMI-0 string:/home/liukui/.cache/himawaripy/himawari.png</span><br><span class="line">rm /home/liukui/.cache/himawaripy/himawari.png</span><br></pre></td></tr></table></figure>
-
-<h3 id="crontab"><a href="#crontab" class="headerlink" title="crontab"></a>crontab</h3><p>Linux操作系统上可通过配置crontab任务实现定时运行脚本的操作。</p>
-<p>crontab是linux系统上用来定期执行程序的命令。<br>当安装完成操作系统之后，默认便会启动此任务调度命令。<br>crond命令每分锺会定期检查是否有要执行的工作，如果有要执行的工作便会自动执行该工作。<br>注意：新创建的cron任务，不会马上执行，至少要过2分钟后才可以，当然你可以重启cron来马上执行。<br>具体语法可参考<a target="_blank" rel="noopener" href="https://www.runoob.com/linux/linux-comm-crontab.html">crontab教程</a>。</p>
-<p>执行<code>crontab -e</code>指令，编辑crontab，在最后一行加入<br><code>*/10 * * * * ./etc/profile; /bin/sh /usr/local/bin/wallpaper</code><br>将脚本添加到crontab调度中。<br>上述指令表示每十分钟执行一次指定的脚本。</p>
-<p>通过以上设置，就可以实现自动更换linux系统壁纸的功能。</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">工具</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Python</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/10/03/himawaripy-in-linux/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
   
     <nav id="page-nav">
       <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/">Next &amp;raquo;</a>
@@ -1228,11 +1242,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">QT</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color2">Driver</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -1244,7 +1258,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Driver</a>
+                <a href="javascript:void(0)" class="js-tag color3">QT</a>
               </li>
              
               <li class="article-tag-list-item">

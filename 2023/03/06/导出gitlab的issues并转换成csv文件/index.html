@@ -6,14 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>Archives: 2022/4 | 叶落无痕的学习之路</title>
+  <title>导出gitlab的issues并转换成csv文件 | 叶落无痕的学习之路</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="叶落无痕的学习之路">
-<meta property="og:url" content="http://example.com/archives/2022/04/index.html">
+  <meta name="description" content="gitlab获取仓库信息获取PRIVATE-TOKENgitlab提供了API接口，可以对gitlab里的数据进行各种操作，具体可见gitlab参考文档。 使用gitlab提供的API接口时，基本都需要使用PRIVATE-TOKEN进行身份认证。 PRIVATE-TOKEN的获取方式如下：  进入gitlab的user settings 进入access token 在右侧personal acc">
+<meta property="og:type" content="article">
+<meta property="og:title" content="导出gitlab的issues并转换成csv文件">
+<meta property="og:url" content="http://example.com/2023/03/06/%E5%AF%BC%E5%87%BAgitlab%E7%9A%84issues%E5%B9%B6%E8%BD%AC%E6%8D%A2%E6%88%90csv%E6%96%87%E4%BB%B6/index.html">
 <meta property="og:site_name" content="叶落无痕的学习之路">
+<meta property="og:description" content="gitlab获取仓库信息获取PRIVATE-TOKENgitlab提供了API接口，可以对gitlab里的数据进行各种操作，具体可见gitlab参考文档。 使用gitlab提供的API接口时，基本都需要使用PRIVATE-TOKEN进行身份认证。 PRIVATE-TOKEN的获取方式如下：  进入gitlab的user settings 进入access token 在右侧personal acc">
 <meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2023-03-06T07:26:12.000Z">
+<meta property="article:modified_time" content="2023-03-06T08:03:28.703Z">
 <meta property="article:author" content="LK">
+<meta property="article:tag" content="工具">
+<meta property="article:tag" content="QT">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="叶落无痕的学习之路" type="application/atom+xml">
@@ -159,64 +165,205 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-导出gitlab的issues并转换成csv文件" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2022" class="archive-year">2022</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2022/04/17/study-of-compile/" class="archive-article-date">
-  	<time datetime="2022-04-17T07:44:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2022-04-17</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2022/04/17/study-of-compile/">study of compile</a>
+    <h1 class="article-title" itemprop="name">
+      导出gitlab的issues并转换成csv文件
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2023/03/06/%E5%AF%BC%E5%87%BAgitlab%E7%9A%84issues%E5%B9%B6%E8%BD%AC%E6%8D%A2%E6%88%90csv%E6%96%87%E4%BB%B6/" class="archive-article-date">
+  	<time datetime="2023-03-06T07:26:12.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2023-03-06</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="gitlab获取仓库信息"><a href="#gitlab获取仓库信息" class="headerlink" title="gitlab获取仓库信息"></a>gitlab获取仓库信息</h2><h3 id="获取PRIVATE-TOKEN"><a href="#获取PRIVATE-TOKEN" class="headerlink" title="获取PRIVATE-TOKEN"></a>获取PRIVATE-TOKEN</h3><p>gitlab提供了API接口，可以对gitlab里的数据进行各种操作，具体可见<a target="_blank" rel="noopener" href="https://docs.gitlab.com/ee/api/">gitlab参考文档</a>。</p>
+<p>使用gitlab提供的API接口时，基本都需要使用PRIVATE-TOKEN进行身份认证。</p>
+<p>PRIVATE-TOKEN的获取方式如下：</p>
+<ol>
+<li>进入gitlab的user settings</li>
+<li>进入access token</li>
+<li>在右侧personal access tokens中填入姓名、过期时间，勾选相应权限，点击create</li>
+<li>自行保存生成的PRIVATE-TOKEN，PRIVATE-TOKEN在界面刷新之后，就不能再看到了</li>
+</ol>
+<h3 id="获取group的ID"><a href="#获取group的ID" class="headerlink" title="获取group的ID"></a>获取group的ID</h3><p><code> curl --header &quot;PRIVATE-TOKEN: xxx&quot; &quot;http://gitlab.example.com/api/v4/groups/&quot; &gt; groupid.json</code></p>
+<p>v4表示API的版本</p>
+<p>gitlab返回的数据是一个json字符串，可以将其储存在一个json文件中，以便后续处理</p>
+<h3 id="获取project的ID"><a href="#获取project的ID" class="headerlink" title="获取project的ID"></a>获取project的ID</h3><p>假如上面获取的group的ID为10，则用下面的指令获取project的ID</p>
+<p><code>curl --header &quot;PRIVATE-TOKEN: xxx&quot; &quot;http://gitlab.example.com/api/v4/groups/10/projects&quot; &gt; projectid.json</code></p>
+<h3 id="获取project的issues"><a href="#获取project的issues" class="headerlink" title="获取project的issues"></a>获取project的issues</h3><p>假如上面获取到的project的ID为100，则用下面的指令获取issues</p>
+<p><code>curl --head --header &quot;PRIVATE-TOKEN: &lt;your_access_token&gt;&quot; &quot;https://gitlab.example.com/api/v4/projects/9/issues/8/notes?per_page=30&amp;page=2&quot; &gt; issues.json</code></p>
+<p>gitlab默认服务器每次只返回20条数据，可以通过设置per_page和page的值，指定返回的数据个数</p>
+<p>上述指令表示，设置服务器每页30页数据，获取其中的第二页数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">page: Page number(default:1)</span><br><span class="line">per_page:Number of items to list per page(default:20,max:100)</span><br></pre></td></tr></table></figure>
+
+<h2 id="将Json文件转换成CSV文件"><a href="#将Json文件转换成CSV文件" class="headerlink" title="将Json文件转换成CSV文件"></a>将Json文件转换成CSV文件</h2><p>通过上述操作，即可获取到需要的json数据，接下来就写一个工具，提取其中的数据，转换成csv文件</p>
+<p>工具比较简单，只有两个功能，读取json数据部分，以及写入csv文件部分。</p>
+<p>读取部分如下</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">PraseJson::readJsonFile</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="function">QFile <span class="title">file</span><span class="params">(m_oriFilePath)</span></span>;</span><br><span class="line">    <span class="keyword">if</span> (!file.open(QIODevice::ReadOnly)) &#123;</span><br><span class="line">        qCritical() &lt;&lt; <span class="string">&quot;File open failed&quot;</span>;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function">QByteArray <span class="title">data</span><span class="params">(file.readAll())</span></span>;</span><br><span class="line">    file.close();</span><br><span class="line">    qDebug() &lt;&lt; <span class="string">&quot;File read finished&quot;</span>;</span><br><span class="line"></span><br><span class="line">    QJsonParseError jError;</span><br><span class="line">    QJsonDocument jDoc = QJsonDocument::fromJson(data, &amp;jError);</span><br><span class="line">    <span class="keyword">if</span> (jError.error != QJsonParseError::NoError) &#123;</span><br><span class="line">        qCritical() &lt;&lt; <span class="string">&quot;Error: &quot;</span> &lt;&lt; jError.errorString();</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> QJsonArray jArr = jDoc.<span class="built_in">array</span>();</span><br><span class="line">    <span class="keyword">const</span> QJsonObject jObj = jDoc.object();</span><br><span class="line">    qDebug() &lt;&lt; jArr.size();</span><br><span class="line">    QJsonValue jValue;</span><br><span class="line">    QJsonObject jObj2;</span><br><span class="line">    m_outputLst.clear();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; jArr.size(); i++) &#123;</span><br><span class="line">        m_tmpLst.clear();</span><br><span class="line">        jValue = jArr.at(i);</span><br><span class="line">        jObj2 = jValue.toObject();</span><br><span class="line">        <span class="keyword">auto</span> objAct = jObj2.toVariantMap();</span><br><span class="line">        m_tmpLst.append(objAct[<span class="string">&quot;iid&quot;</span>].toString());</span><br><span class="line">        m_tmpLst.append(objAct[<span class="string">&quot;title&quot;</span>].toString());</span><br><span class="line"><span class="comment">//        m_tmpLst.append(objAct[&quot;description&quot;].toString().simplified());</span></span><br><span class="line">        m_tmpLst.append(objAct[<span class="string">&quot;state&quot;</span>].toString());</span><br><span class="line">        m_outputLst.push_back(m_tmpLst);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>写入CSV文件部分如下</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">PraseJson::writeCsvFile</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    QString fileName = m_oriFilePath.replace(<span class="string">&quot;.json&quot;</span>, <span class="string">&quot;.csv&quot;</span>);</span><br><span class="line">    <span class="function">QFile <span class="title">file</span><span class="params">(fileName)</span></span>;</span><br><span class="line">    <span class="keyword">if</span> (!file.open(QIODevice::WriteOnly)) &#123;</span><br><span class="line">        qCritical() &lt;&lt; <span class="string">&quot;File open failed&quot;</span>;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function">QTextStream <span class="title">stream</span><span class="params">(&amp;file)</span></span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; m_outputLst.size(); i++) &#123;</span><br><span class="line">        stream &lt;&lt; m_outputLst.at(i).join(<span class="string">&quot;,&quot;</span>) &lt;&lt; <span class="string">&quot;\r\n&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    file.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>由于csv文件是通过’,’作为单元格的分隔符，以及通过换行符”\r\n”作为一行的结束，因此，如果数据中包含这些特殊字符时，需要单独进行处理，例如增加转义字符，将’,’改成’\,’等。</p>
+<p>还可以优化的部分</p>
+<ol>
+<li>一次处理多个文件</li>
+<li>将多个文件处理的结果追加到一个csv文件中</li>
+<li>处理含有特殊字符的数据</li>
+</ol>
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">编译</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">工具</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">工具</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">QT</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2023/03/06/%E5%AF%BC%E5%87%BAgitlab%E7%9A%84issues%E5%B9%B6%E8%BD%AC%E6%8D%A2%E6%88%90csv%E6%96%87%E4%BB%B6/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
   
   
-    </div></section>
+    <a href="/2023/02/27/%E5%85%AB%E4%BD%8Dbool%E5%80%BC%E6%95%B0%E7%BB%84%E8%BD%AC%E6%8D%A2%E6%88%90uint8/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">八位bool值数组转换成uint8</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+  
+  
   
 
-    
+  
+
+  
+
+  
 
 
           </div>
@@ -239,8 +386,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,

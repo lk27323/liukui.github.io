@@ -161,6 +161,117 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-电脑操作指令学习" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/01/28/%E7%94%B5%E8%84%91%E6%93%8D%E4%BD%9C%E6%8C%87%E4%BB%A4%E5%AD%A6%E4%B9%A0/">电脑操作指令学习</a>
+    </h1>
+  
+
+        
+        <a href="/2021/01/28/%E7%94%B5%E8%84%91%E6%93%8D%E4%BD%9C%E6%8C%87%E4%BB%A4%E5%AD%A6%E4%B9%A0/" class="archive-article-date">
+  	<time datetime="2021-01-28T13:53:13.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-01-28</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>本文主要用于记录自己在使用电脑时遇到的一些的操作指令</p>
+<h3 id="1-查看电脑硬件信息"><a href="#1-查看电脑硬件信息" class="headerlink" title="1.查看电脑硬件信息"></a>1.查看电脑硬件信息</h3><p>cmd–&gt;dxdiag</p>
+<h3 id="2-解除电脑网速限制"><a href="#2-解除电脑网速限制" class="headerlink" title="2.解除电脑网速限制"></a>2.解除电脑网速限制</h3><p>cmd–&gt;gpedit.msc–&gt;管理模块–&gt;网络–&gt;QoS–&gt;限制可保留带宽–&gt;已启用–&gt;0</p>
+<h3 id="3-禁止广告弹窗"><a href="#3-禁止广告弹窗" class="headerlink" title="3.禁止广告弹窗"></a>3.禁止广告弹窗</h3><p>右键此电脑–&gt;管理–&gt;任务计划程序–&gt;任务计划程序库–&gt;禁用</p>
+<h3 id="4-查看最近访问"><a href="#4-查看最近访问" class="headerlink" title="4.查看最近访问"></a>4.查看最近访问</h3><p>cmd–&gt;recent</p>
+<h3 id="5-清理磁盘垃圾"><a href="#5-清理磁盘垃圾" class="headerlink" title="5.清理磁盘垃圾"></a>5.清理磁盘垃圾</h3><p>cmd–&gt;chkdsk–&gt;sfc/scannow</p>
+<h3 id="6-电脑断网时"><a href="#6-电脑断网时" class="headerlink" title="6.电脑断网时"></a>6.电脑断网时</h3><p>cmd–&gt;ipconfig/flushdns</p>
+<h3 id="7-删除恶意软件"><a href="#7-删除恶意软件" class="headerlink" title="7.删除恶意软件"></a>7.删除恶意软件</h3><p>cmd–&gt;mrt</p>
+<h3 id="8-终端中配置代理"><a href="#8-终端中配置代理" class="headerlink" title="8.终端中配置代理"></a>8.终端中配置代理</h3><p>终端输入</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">set http_proxy&#x3D;127.0.0.1:4780</span><br><span class="line">set https_proxy&#x3D;127.0.0.1:4780</span><br></pre></td></tr></table></figure>
+
+<p>端口号在网络和Internet–&gt;代理中可以看到。<br>注意：不要输入ping <a target="_blank" rel="noopener" href="http://www.google.com/">www.google.com</a><br>ping的协议不是https，也不是https，是ICMP协议。<br>终端输入<br><code>curl -vv www.google.com</code><br>如果有数据，说明代理设置成功。</p>
+<h3 id="9-更改磁盘默认图标"><a href="#9-更改磁盘默认图标" class="headerlink" title="9.更改磁盘默认图标"></a>9.更改磁盘默认图标</h3><p>将一个ico后缀的图标文件命名为xxx.ico，放在根目录下，创建一个inf文件，命名为autorun.inf，内容写一下内容。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[autorun]</span><br><span class="line">icon&#x3D;xxx.ico</span><br></pre></td></tr></table></figure>
+
+<p>重启电脑即可</p>
+<h3 id="10-电脑自带cmd工具"><a href="#10-电脑自带cmd工具" class="headerlink" title="10.电脑自带cmd工具"></a>10.电脑自带cmd工具</h3><h4 id="截图工具"><a href="#截图工具" class="headerlink" title="截图工具"></a>截图工具</h4><p>snippingtool</p>
+<h4 id="画板"><a href="#画板" class="headerlink" title="画板"></a>画板</h4><p>mspaint</p>
+<h4 id="计算器"><a href="#计算器" class="headerlink" title="计算器"></a>计算器</h4><p>calc</p>
+<h4 id="记事本"><a href="#记事本" class="headerlink" title="记事本"></a>记事本</h4><p>notepad</p>
+<h3 id="11-系统错误提示码"><a href="#11-系统错误提示码" class="headerlink" title="11.系统错误提示码"></a>11.系统错误提示码</h3><h4 id="0x80070522"><a href="#0x80070522" class="headerlink" title="0x80070522"></a>0x80070522</h4><p>在删除或者复制文件时，系统提示错误0x80070522:客户端没有所需的特权。<br>在cmd中输入以下指令即可解决。<br><code>icacls c:\ /setintegritylevel M</code></p>
+<h3 id="12-隐藏Windows-10中此电脑默认文件夹"><a href="#12-隐藏Windows-10中此电脑默认文件夹" class="headerlink" title="12.隐藏Windows 10中此电脑默认文件夹"></a>12.隐藏Windows 10中此电脑默认文件夹</h3><p>新建文本文档，在其中输入以下内容</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">Windows Registry Editor Version 5.00</span><br><span class="line"></span><br><span class="line">;隐藏此电脑&quot;视频&quot;文件夹</span><br><span class="line"></span><br><span class="line">[-HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\&#123;f86fa3ab-70d2-4fc7-9c99-fcbf05467f3a&#125;]</span><br><span class="line"></span><br><span class="line">;隐藏此电脑&quot;文档&quot;文件夹</span><br><span class="line"></span><br><span class="line">[-HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\&#123;d3162b92-9365-467a-956b-92703aca08af&#125;]</span><br><span class="line"></span><br><span class="line">;隐藏此电脑&quot;桌面&quot;文件夹</span><br><span class="line"></span><br><span class="line">[-HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\&#123;B4BFCC3A-DB2C-424C-B029-7FE99A87C641&#125;]</span><br><span class="line"></span><br><span class="line">;隐藏此电脑&quot;音乐&quot;文件夹</span><br><span class="line"></span><br><span class="line">[-HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\&#123;3dfdf296-dbec-4fb4-81d1-6a3438bcf4de&#125;]</span><br><span class="line"></span><br><span class="line">;隐藏此电脑&quot;下载&quot;文件夹</span><br><span class="line"></span><br><span class="line">[-HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\&#123;088e3905-0323-4b02-9826-5d99428e115f&#125;]</span><br><span class="line"></span><br><span class="line">;隐藏此电脑&quot;图片&quot;文件夹</span><br><span class="line"></span><br><span class="line">[-HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\&#123;24ad3ad4-a569-4530-98e1-ab02f9417aa8&#125;]</span><br><span class="line"></span><br><span class="line">;隐藏此电脑&quot;3D对象&quot;文件夹</span><br><span class="line"></span><br><span class="line">[-HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\&#123;0DB7E03F-FC29-4DC6-9020-FF41B59E513A&#125;]</span><br></pre></td></tr></table></figure>
+
+<p>修改文件后缀名为.reg，双击运行，即可隐藏默认文件夹。<br>想要恢复默认文件夹，将每一条指令前的’-‘删除即可。</p>
+<h3 id="13-hexo部署"><a href="#13-hexo部署" class="headerlink" title="13.hexo部署"></a>13.hexo部署</h3><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/35668237">hexo部署</a></p>
+<h3 id="14-winrar去广告"><a href="#14-winrar去广告" class="headerlink" title="14.winrar去广告"></a>14.winrar去广告</h3><p>在WinRAR安装目录创建txt文件， 拷贝如下内容并保存：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">RAR registration data</span><br><span class="line"></span><br><span class="line">Federal Agency for Education</span><br><span class="line"></span><br><span class="line">1000000 PC usage license</span><br><span class="line"></span><br><span class="line">UID&#x3D;b621cca9a84bc5deffbf</span><br><span class="line"></span><br><span class="line">6412612250ffbf533df6db2dfe8ccc3aae5362c06d54762105357d</span><br><span class="line"></span><br><span class="line">5e3b1489e751c76bf6e0640001014be50a52303fed29664b074145</span><br><span class="line"></span><br><span class="line">7e567d04159ad8defc3fb6edf32831fd1966f72c21c0c53c02fbbb</span><br><span class="line"></span><br><span class="line">2f91cfca671d9c482b11b8ac3281cb21378e85606494da349941fa</span><br><span class="line"></span><br><span class="line">e9ee328f12dc73e90b6356b921fbfb8522d6562a6a4b97e8ef6c9f</span><br><span class="line"></span><br><span class="line">fb866be1e3826b5aa126a4d2bfe9336ad63003fc0e71c307fc2c60</span><br><span class="line"></span><br><span class="line">64416495d4c55a0cc82d402110498da970812063934815d81470829275</span><br></pre></td></tr></table></figure>
+
+<p>将文件改为：rarreg.key<br>注意key是文件后缀，一般国际中文版的破解到这里就结束了，但是国内中文版还在exe的执行过程中植入了广告链接，所以还需要使用Resource Hacker，才能完全去除广告。关于Resource Hacker的使用方法在需要的时候再查即可。</p>
+<h3 id="15-vim"><a href="#15-vim" class="headerlink" title="15.vim"></a>15.vim</h3><p>关于vim的配置文件，可以参考<a target="_blank" rel="noopener" href="https://blog.csdn.net/cy413026/article/details/84326936">这篇文章</a>。</p>
+<h3 id="16-显示电脑wifi密码"><a href="#16-显示电脑wifi密码" class="headerlink" title="16.显示电脑wifi密码"></a>16.显示电脑wifi密码</h3><p>显示电脑中已经连接过的wifi的密码信息<br>cmd中输入以下指令<br><code>netsh wlan show profiles</code><br>接下来以下指令即可显示指定wifi的密码<br><code>netsh wlan show profiles + &quot;wifi名称&quot; + key=clear</code></p>
+<h3 id="17-控制台中设置代理"><a href="#17-控制台中设置代理" class="headerlink" title="17.控制台中设置代理"></a>17.控制台中设置代理</h3><p>在使用控制台的时候，如果不指定代理，控制台是不会自动走代理端口，往往会导致控制台中无法下载GitHub上的代码，或者访问某些外网。因此需要手动设置控制台的代理。设置方式如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">set</span> http_proxy=http://127.0.0.1:4780</span><br><span class="line"><span class="built_in">set</span> https_proxy=http://127.0.0.1:4780</span><br></pre></td></tr></table></figure>
+
+<p>本机中的代理，可以直接用127.0.0.1地址加代理端口即可；</p>
+<p>如果是局域网中，可以将地址改为对应电脑的IP地址即可。</p>
+<h3 id="18-git-bash中文显示乱码"><a href="#18-git-bash中文显示乱码" class="headerlink" title="18.git bash中文显示乱码"></a>18.git bash中文显示乱码</h3><p><code>git config --global core.quotepath false</code></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">工具</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/01/28/%E7%94%B5%E8%84%91%E6%93%8D%E4%BD%9C%E6%8C%87%E4%BB%A4%E5%AD%A6%E4%B9%A0/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-chorme浏览器插件" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -585,11 +696,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">QT</a>
+                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Linux</a>
+                <a href="javascript:void(0)" class="js-tag color2">Driver</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -601,7 +712,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color2">Driver</a>
+                <a href="javascript:void(0)" class="js-tag color3">QT</a>
               </li>
              
               <li class="article-tag-list-item">
